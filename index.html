@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mbee3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ctext y='8' font-size='8'%3E%F0%9F%90%9D%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fff4d6;--card:#fffaf0;--ink:#5a3a1e;--soft:#9b7a55;--honey:#ffb81c;--glow:#ffe08a;--blush:#ffc9d6;--mint:#cdeedd;--edge:#5a3a1e;--border:#ffc9d6;--hex:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{position:relative;overflow-x:hidden;background-color:var(--cream);background-image:url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f2b53a' fill-opacity='.22'%3E%3Cpath fill-rule='evenodd' d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/svg%3E");color:var(--ink);font-family:Nunito,"Trebuchet MS",system-ui,sans-serif;min-height:100vh;padding:78px 16px 30px}
+.drip{position:absolute;left:0;right:0;top:0;height:58px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='58'%3E%3Cpath fill='%23ffb81c' d='M0 0h120v14H0z M22 10h14v22a7 7 0 0 1-14 0z M78 10h12v14a6 6 0 0 1-12 0z'/%3E%3Cpath fill='%23ffe08a' opacity='.8' d='M0 3h120v3H0z'/%3E%3C/svg%3E") repeat-x}
+.wrap{max-width:760px;margin:0 auto;position:relative;z-index:2}
+header{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 26px}
+header svg{width:54px;height:54px;flex:none;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(4deg)}}
+h1{font:600 2.1rem/1 Fredoka,sans-serif;margin:0}
+.hx{display:inline-grid;place-items:center;width:1.25em;height:1.4em;margin:0 1px;background:var(--honey);clip-path:var(--hex);font-size:.8em;vertical-align:.05em}
+h1 small{display:block;font:400 .85rem Nunito,sans-serif;color:var(--soft);margin-top:7px}
+.card{position:relative;background:var(--card);border:3px solid var(--edge);border-radius:30px;padding:26px 22px 22px;box-shadow:0 7px 0 #e9a921}
+.card::before,.card::after{content:"";position:absolute;clip-path:var(--hex)}
+.card::after{right:-12px;top:-20px;width:46px;height:51px;background:var(--honey)}
+.card::before{right:30px;top:-27px;width:26px;height:29px;background:var(--blush)}
+h2{font:600 1.15rem Fredoka,sans-serif;margin:0 0 14px}
+.drop{border:3px dashed #e9a921;border-radius:22px;padding:22px 14px;text-align:center;background:#fff;cursor:pointer;margin-bottom:18px;transition:transform .2s,background .2s}
+.drop:hover{transform:rotate(-.6deg) scale(1.01)}
+.drop.over{background:var(--glow)}
+.drop .ic{display:inline-grid;place-items:center;width:54px;height:60px;background:var(--honey);clip-path:var(--hex);font-size:1.5rem;margin-bottom:6px}
+.drop b{display:block;font:600 1.05rem Fredoka,sans-serif;word-break:break-all}
+.drop span{color:var(--soft);font-size:.88rem}
+.player{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.player audio{flex:1;height:36px;min-width:0;accent-color:var(--honey)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chips:empty{display:none}
+.chips i{font-style:normal;font-size:.78rem;background:var(--glow);border-radius:999px;padding:3px 11px}
+.grid{display:grid;grid-template-columns:230px 1fr;gap:22px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.cov{max-width:250px;margin:0 auto}}
+.cov .frame{position:relative;aspect-ratio:1;border:8px solid #fff;border-radius:30px;background:#fff;box-shadow:0 0 0 3px var(--edge),0 7px 0 3px var(--edge);overflow:hidden;display:grid;place-items:center;transition:transform .25s}
+.cov .frame:hover{transform:rotate(-2deg) scale(1.02)}
+.cov img{width:100%;height:100%;object-fit:cover;display:block}
+.cov .none{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--soft);font-size:.85rem;background:repeating-linear-gradient(45deg,#fff 0 12px,#fff7e0 12px 24px)}
+.cov .none b{display:block;font-size:2rem}
+.sw{display:flex;gap:9px;justify-content:center;margin:20px 0 12px}
+.sw button{width:26px;height:29px;border:0;padding:0;cursor:pointer;clip-path:var(--hex);transition:transform .15s}
+.sw button:hover{transform:scale(1.3) rotate(12deg)}
+.btn{font:600 .98rem Fredoka,sans-serif;color:var(--ink);background:var(--honey);border:3px solid var(--edge);border-radius:999px;padding:10px 22px;cursor:pointer;box-shadow:0 4px 0 var(--edge);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(-2px) rotate(-1deg);box-shadow:0 6px 0 var(--edge)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.btn.soft{background:#fff}.btn.pink{background:var(--blush)}
+.cov .btn{width:100%;font-size:.85rem;padding:7px;margin-bottom:9px}
+.cov .btn:last-child{margin-bottom:0}
+button:focus-visible,input:focus-visible,.drop:focus-visible{outline:3px solid #8fc9ff;outline-offset:2px}
+label{display:block;font-size:.85rem;font-weight:700;margin:0 0 12px;color:var(--soft)}
+label::before{content:"";display:inline-block;width:.8em;height:.9em;background:var(--honey);clip-path:var(--hex);margin-right:6px;vertical-align:-.1em}
+input[type=text],input[type=password]{width:100%;font:inherit;font-weight:400;color:var(--ink);background:#fff;border:2.5px solid var(--edge);border-radius:16px;padding:10px 13px;margin-top:4px;transition:box-shadow .2s}
+input[type=text]:focus,input[type=password]:focus{box-shadow:0 0 0 4px var(--glow);outline:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.msg{margin-top:16px;padding:11px 15px;border-radius:16px;font-size:.93rem;display:none}
+.msg.ok{display:block;background:var(--mint);animation:pop .3s}.msg.err{display:block;background:var(--blush)}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.hide{display:none!important}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.fname{padding:8px 12px;margin-bottom:12px;font-size:.9rem;word-break:break-all;background:#f0f0f0}
+.note{font-size:.8rem;margin:12px 0 0}
+footer{text-align:center;color:var(--soft);font-size:.85rem;margin-top:30px}
+footer span{display:inline-block;width:14px;height:16px;background:var(--honey);clip-path:var(--hex);margin:0 3px;vertical-align:-2px}
+footer span:nth-child(2){background:var(--blush)}footer span:nth-child(3){background:var(--mint)}
+.bees svg{position:fixed;left:-60px;width:30px;height:30px;z-index:1;pointer-events:none;animation:fly 24s linear infinite}
+.bees svg:nth-child(2){top:46%;animation-duration:32s;animation-delay:-11s;width:22px}
+.bees svg:nth-child(3){top:78%;animation-duration:28s;animation-delay:-20s}
+.bees svg:nth-child(1){top:24%}
+@keyframes fly{0%{transform:translate(0,0)}25%{transform:translate(28vw,-22px)}50%{transform:translate(56vw,14px)}75%{transform:translate(84vw,-18px)}100%{transform:translate(112vw,0)}}
+.sp{position:fixed;width:11px;height:12px;background:var(--honey);clip-path:var(--hex);pointer-events:none;z-index:50;animation:spark .65s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.2) rotate(120deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.beeBtn{background:none;border:0;padding:0;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent}
+.dance svg{animation:dance 1.3s ease-in-out!important}
+@keyframes dance{15%{transform:translateY(-16px) rotate(-18deg)}30%{transform:rotate(14deg) scale(1.12)}45%{transform:translateY(-14px) rotate(-14deg)}65%{transform:rotate(360deg)}85%{transform:translateY(-8px) scale(1.15,.9)}100%{transform:none}}
+#snd{position:fixed;left:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:5;font:600 .85rem Fredoka,sans-serif;color:var(--ink);background:var(--glow);border:2.5px solid var(--edge);border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 3px 0 var(--edge)}
+:root{--cw:min(340px,88vw)}
+html.dark{background:#0b0b0c}
+body.plain{background:#0b0b0c;background-image:none;color:#eee;padding:12px 16px 40px;font-size:16px}
+body.plain,body.plain *{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;animation:none!important}
+body.plain .drip,body.plain .bees,body.plain footer{display:none!important}
+#lk{max-width:480px;margin:0 auto}
+#lk .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+#lk h2{font-size:1.15rem;font-weight:600;margin:0;color:#fff}
+#lk p{margin:0}
+.box{border:1px solid #2c2c2c;background:#121214;border-radius:12px;padding:20px}
+.hint{color:#888;font-size:.9rem}
+.file{background:#1a1a1d;border-radius:8px;padding:10px 12px;margin:16px 0 14px!important;word-break:break-all;font-size:.95rem}
+.lnk{background:none;border:0;color:#fff;text-decoration:underline;text-underline-offset:3px;font-size:1.05rem;padding:8px 0;cursor:pointer}
+.lnk:hover{color:#22c55e}
+.lnk.sm{font-size:.95rem}
+.lnk.b{border:1px solid #555;border-radius:8px;padding:9px 18px}
+.lnk.b:hover{background:#1c1c1f;border-color:#22c55e}
+.seg{display:inline-flex;border:1px solid #444;border-radius:8px;overflow:hidden;margin:0 10px 14px 0}
+.seg button{background:none;border:0;color:#ddd;padding:8px 16px;font-size:.95rem;cursor:pointer}
+.seg button+button{border-left:1px solid #444}
+.seg button.sel{background:#22c55e;color:#000;font-weight:700}
+#lk label{display:block;color:#bbb;font-size:.9rem;font-weight:400;margin:0 0 14px}
+#lk label::before{display:none}
+#lk label.chk{display:flex;align-items:center;gap:8px}
+#lk input[type=password],#lk input[type=text]{background:#0b0b0c;color:#fff;border:1px solid #444;border-radius:8px;padding:10px 12px;width:100%;margin-top:6px;font-size:1rem;box-shadow:none}
+#lk input[type=password]:focus,#lk input[type=text]:focus{border-color:#22c55e;box-shadow:none}
+#lk input[type=checkbox],.tile input{accent-color:#22c55e}
+.acts{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#bar{display:none;position:sticky;top:0;z-index:50;align-items:flex-end;gap:4px;max-width:760px;margin:0 auto 14px;padding-top:max(0px,env(safe-area-inset-top));background:#0b0b0c;border-bottom:1px solid #444}
+body.plain #bar{display:flex}
+.tb{font-size:.92rem;color:#aaa;background:#161618;border:1px solid #2c2c2c;border-bottom:0;border-radius:8px 8px 0 0;padding:9px 13px;cursor:pointer;margin-bottom:-1px;white-space:nowrap}
+.tb:hover{color:#fff}
+.tb.act{background:#121214;color:#fff;border-color:#444;font-weight:600;padding-bottom:10px}
+.tb[data-t=pv].act{border-top:3px solid #60a5fa}
+.tb[data-t=con].act{border-top:3px solid #22c55e}
+.tb[data-t=tool].act{border-top:3px solid #fff}
+.tb span{color:#888;font-weight:400}
+.tb.back{margin-left:auto;background:none;border:0;text-decoration:underline;color:#ddd;padding:9px 4px}
+.pane{max-width:760px;margin:0 auto}
+.pcard{border:1px solid #2c2c2c;background:#121214;border-radius:12px;padding:16px}
+.phead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:12px}
+.phead h2{font-size:1.2rem;margin:0;color:#fff}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:.95rem;margin-bottom:8px;color:#888}
+.crumbs button{background:none;border:0;color:#60a5fa;text-decoration:underline;cursor:pointer;font-size:.95rem;padding:4px 2px}
+.crumbs b{color:#fff}
+.ptools{display:flex;flex-wrap:wrap;gap:0 18px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2c2c2c}
+.lnk:disabled{opacity:.4;cursor:default;text-decoration:none}
+.plist .r{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #222;cursor:pointer;border-radius:6px}
+.plist .r:hover{background:#1a1a1d}
+.plist input{width:20px;height:20px;flex:none;accent-color:#22c55e}
+.plist .th{width:48px;height:48px;flex:none;border-radius:6px;background:#1a1a1d;display:grid;place-items:center;overflow:hidden;font-size:.7rem;color:#999}
+.plist .th img,.plist .th canvas{width:100%;height:100%;object-fit:cover}
+.plist .nm{flex:1;min-width:0;word-break:break-all;font-size:.95rem}
+.plist .meta{color:#888;font-size:.8rem;flex:none}
+.plist.nothumb .th{display:none}
+#logv{font-family:ui-monospace,Menlo,Consolas,monospace!important;font-size:.8rem;line-height:1.55;max-height:calc(100vh - 230px);overflow:auto}
+#logv div{padding:2px 0;word-break:break-word;color:#d4d4d8}
+#logv .t{color:#6b7280;margin-right:8px}
+#logv .e{color:#f87171}#logv .o{color:#4ade80}
+.stat{margin:12px 0 0!important;font-size:.95rem}
+.stat.ok{color:#4ade80}.stat.err{color:#f87171}
+.ov{position:fixed;inset:0;z-index:100;background:#0b0b0c;color:#eee;overflow:auto;padding:max(60px,calc(env(safe-area-inset-top) + 52px)) 18px 24px}
+.ov .x{position:fixed;top:max(8px,env(safe-area-inset-top));right:8px;width:52px;height:52px;font-size:2rem;line-height:1;background:none;border:0;color:#fff;cursor:pointer;z-index:3}
+.ov p{margin:0 0 12px;word-break:break-word}
+#lb .stage{max-width:960px;margin:0 auto;text-align:center}
+#lb img,#lb canvas,#lb video{max-width:100%;max-height:66vh;border-radius:8px}
+#lb pre{text-align:left;white-space:pre-wrap;word-break:break-word;max-height:66vh;overflow:auto;border:1px solid #333;border-radius:8px;padding:12px;margin:0}
+#lb iframe{width:100%;height:66vh;border:1px solid #333;border-radius:8px;background:#fff}
+.nav{position:fixed;top:50%;font-size:2.6rem;background:none;border:0;color:#fff;width:52px;height:80px;margin-top:-40px;cursor:pointer;z-index:3}
+#saveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:120;background:#1f1f23;color:#fff;border:1px solid #555;border-radius:10px;padding:10px 14px;font:.9rem system-ui,sans-serif;display:flex;gap:12px;align-items:center;max-width:94vw;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#saveTxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#saveBar a{color:#4ade80;text-decoration:underline;font-weight:600;white-space:nowrap}
+#saveBar button{background:none;border:0;color:#fff;font-size:1.1rem;cursor:pointer}
+.tb.new::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:6px;vertical-align:middle}
+#vltp label{display:block;color:#bbb;font-size:.9rem;font-weight:400;margin:0 0 14px}
+#vltp label::before{display:none}
+#vltp label.chk{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+#vltp input[type=password],#vltp input[type=text]{background:#0b0b0c;color:#fff;border:1px solid #444;border-radius:8px;padding:10px 12px;width:100%;margin-top:6px;font-size:1rem;box-shadow:none}
+#vltp input[type=radio],#vltp input[type=checkbox]{accent-color:#22c55e;margin:0}
+#vltp .acts{margin-bottom:12px}
+#vltp .plist .r{cursor:default;flex-wrap:wrap}
+#vltp summary{cursor:pointer;margin:8px 0}
+.vers{margin:0 0 8px 18px;font-size:.85rem;color:#bbb}
+.vers div{padding:3px 0}
+#vNote{white-space:pre-wrap;font-size:.85rem;color:#ddd;margin:10px 0 0}
+.warn{color:#facc15;font-size:.88rem;margin:4px 0}
+#bar{overflow-x:auto}
+@media(max-width:520px){.tb{padding:8px 9px;font-size:.85rem}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="bee" viewBox="0 0 100 100"><ellipse cx="30" cy="30" rx="16" ry="22" transform="rotate(-25 30 30)" fill="#e4f3ff" stroke="#5a3a1e" stroke-width="4"/><ellipse cx="70" cy="30" rx="16" ry="22" transform="rotate(25 70 30)" fill="#e4f3ff" stroke="#5a3a1e" stroke-width="4"/><path d="M40 22Q36 8 28 8M60 22Q64 8 72 8" fill="none" stroke="#5a3a1e" stroke-width="4" stroke-linecap="round"/><ellipse cx="50" cy="60" rx="38" ry="32" fill="#ffb81c" stroke="#5a3a1e" stroke-width="4"/><path d="M18 74Q50 90 82 74M24 84Q50 96 76 84" fill="none" stroke="#5a3a1e" stroke-width="7" stroke-linecap="round"/><ellipse cx="30" cy="62" rx="8" ry="5" fill="#ff8fb0"/><ellipse cx="70" cy="62" rx="8" ry="5" fill="#ff8fb0"/><circle cx="38" cy="52" r="4.5" fill="#5a3a1e"/><circle cx="62" cy="52" r="4.5" fill="#5a3a1e"/><circle cx="39.5" cy="50.5" r="1.5" fill="#fff"/><circle cx="63.5" cy="50.5" r="1.5" fill="#fff"/><path d="M44 64Q50 70 56 64" fill="none" stroke="#5a3a1e" stroke-width="3.5" stroke-linecap="round"/></symbol></svg>
+<div class="drip"></div>
+<div class="bees"><svg><use href="#bee"/></svg><svg><use href="#bee"/></svg><svg><use href="#bee"/></svg></div>
+<nav id="bar" aria-label="Tabs"><button class="tb act" data-t="tool" type="button">File tool</button><button class="tb" data-t="vault" type="button">Vault</button><button class="tb" id="tabPv" data-t="pv" type="button">Preview<span id="pvN"></span></button><button class="tb" data-t="con" type="button">Console<span id="conN"></span></button><button class="tb back" id="backBee" type="button">Back to bee</button></nav>
+<div class="wrap">
+<header id="hd">
+<button class="beeBtn" id="beeBtn" type="button" aria-label="Make the bee dance"><svg aria-hidden="true"><use href="#bee"/></svg></button>
+<h1>mbee<span class="hx">3</span><small>sweet little tag editor for your songs</small></h1>
+</header>
+
+<section id="ed" class="card">
+<h2>Your song</h2>
+<div class="drop" id="dropEd" tabindex="0">
+<div class="ic">♪</div>
+<b id="dropTitle">Drop your mp3 here</b>
+<span>or tap to browse</span>
+</div>
+<input id="fileAny" type="file" accept=".mp3,audio/mpeg" class="hide">
+<div id="form">
+<div class="chips" id="chips"></div>
+<label>Title<input type="text" id="t_title"></label>
+<label>Singer<input type="text" id="t_artist"></label>
+<label>Album<input type="text" id="t_album"></label>
+<div class="row">
+<label>Genre<input type="text" id="t_genre"></label>
+<label>Track number<input type="text" id="t_track" inputmode="numeric"></label>
+</div>
+<button class="btn" id="dl" type="button">Download tagged mp3</button>
+</div>
+<div class="msg" id="edMsg" role="status"></div>
+</section>
+
+<section id="lk" class="pane hide">
+<div class="box">
+<button class="lnk b" id="up" type="button">Upload a file</button> <span class="hint">or drop one here</span>
+<input id="lkFile" type="file" class="hide">
+<div id="lkBody" class="hide">
+<p class="file" id="lkName"></p>
+<div class="seg"><button id="mEnc" type="button">Encrypt</button><button id="mDec" type="button">Decrypt</button></div>
+<div class="seg" id="fmtRow"><button id="fAes" type="button">.aes</button><button id="f7z" type="button">.7z</button></div>
+<label>Password<input type="password" id="pw" autocomplete="off"></label>
+<label id="pw2l">Confirm password<input type="password" id="pw2" autocomplete="off"></label>
+<label class="chk"><input type="checkbox" id="showPw">Show password</label>
+<div class="acts"><button class="lnk b" id="go" type="button">Encrypt</button></div>
+<p class="stat" id="stat"></p>
+<div class="acts hide" id="resBox" style="margin-top:12px"><button class="lnk b" id="big" type="button">Download</button></div>
+</div>
+</div>
+</section>
+<section id="vltp" class="pane hide"><div class="pcard">
+<div class="phead"><h2>Vault</h2><span class="hint">One encrypted main file plus small change files, like a simple git.</span></div>
+<div id="vStart">
+<label>Password<input type="password" id="vpw" autocomplete="off"></label>
+<label>Confirm password (new vault only)<input type="password" id="vpw2" autocomplete="off"></label>
+<div class="acts"><button class="lnk b" id="vOpenBtn" type="button">Open vault files</button><button class="lnk b" id="vNewBtn" type="button">New vault from files</button><button class="lnk b" id="vNewDirBtn" type="button">New vault from folder</button></div>
+<input id="vOpenIn" type="file" accept=".aes" multiple class="hide"><input id="vNewIn" type="file" multiple class="hide"><input id="vNewDir" type="file" webkitdirectory class="hide">
+<p class="hint">To open: type the password, press Open vault files, and select the main file plus every change and snapshot file you have.</p>
+</div>
+<div id="vMain" class="hide">
+<p class="hint" id="vInfo"></p><div id="vWarn"></div>
+<div class="acts"><button class="lnk sm" id="vAdd" type="button">Add or replace files</button><button class="lnk sm" id="vAddDir" type="button">Add folder</button></div>
+<label>Put new files in folder (optional)<input type="text" id="vPre" placeholder="top level"></label>
+<input id="vAddIn" type="file" multiple class="hide"><input id="vAddDirIn" type="file" webkitdirectory class="hide">
+<p class="hint" id="vPend"></p>
+<div class="plist" id="vList"></div>
+<p class="hint" style="margin-top:12px">Deleted files</p><div class="plist" id="vDel"></div>
+<div class="acts" style="margin-top:12px"><button class="lnk b" id="vSave" type="button">Save change</button><button class="lnk b" id="vSnap" type="button">Snapshot</button><button class="lnk b" id="vPrev" type="button">Preview</button><button class="lnk b" id="vClose" type="button">Close vault</button></div>
+<details><summary class="lnk sm">Combine into a new main...</summary>
+<p class="hint">Deleted files:</p>
+<label class="chk"><input type="radio" name="vdel" value="remove">Remove completely (no trace)</label>
+<label class="chk"><input type="radio" name="vdel" value="marker" checked>Keep a small marker only (cannot restore)</label>
+<label class="chk"><input type="radio" name="vdel" value="keep">Keep a restorable copy (bigger)</label>
+<label class="chk"><input type="checkbox" id="vHist">Keep old versions of edited files (bigger)</label>
+<button class="lnk b" id="vCombine" type="button">Build new main</button>
+</details>
+</div>
+<p class="stat" id="vStat"></p><pre id="vNote"></pre>
+</div></section>
+<section id="pvp" class="pane hide"><div class="pcard">
+<div class="phead"><h2>Previewer</h2><span class="hint" id="pvSrc">Nothing loaded</span></div>
+<p class="hint" id="pvEmpty">Nothing to preview yet. Upload a file to preview it, or decrypt a file to see what is inside.</p>
+<div id="pvBody" class="hide">
+<div class="crumbs" id="crumbs"></div>
+<div class="ptools"><button class="lnk sm" id="togAll" type="button">Hide previews</button><button class="lnk sm" id="selHere" type="button">Select all in this folder</button><button class="lnk sm" id="clrSel" type="button">Clear selection</button><button class="lnk sm" id="dlSel" type="button">Download selected (0)</button></div>
+<div class="plist" id="plist"></div>
+</div>
+</div></section>
+<section id="conp" class="pane hide"><div class="pcard">
+<div class="phead"><h2>Console</h2><span class="hint">Live record of what the tool is doing. Passwords are never logged. Cleared when you leave.</span></div>
+<div class="ptools"><button class="lnk sm" id="copyLog" type="button">Copy log</button><button class="lnk sm" id="clrLog" type="button">Clear</button></div>
+<div id="logv"></div>
+</div></section>
+<footer><span></span><span></span><span></span><br>made with honey</footer>
+</div>
+
+<div id="saveBar" class="hide" role="status"><span id="saveTxt"></span><a id="saveLink" href="#">Tap here to save</a><button id="saveX" type="button" aria-label="Dismiss">✕</button></div>
+<button id="snd" type="button">♪ music: on</button>
+<div id="lb" class="ov hide" role="dialog" aria-modal="true"><button class="x" id="lbX" type="button" aria-label="Close">✕</button><button class="nav" id="lbP" type="button" style="left:2px" aria-label="Previous">‹</button><button class="nav" id="lbN" type="button" style="right:2px" aria-label="Next">›</button><div class="stage"><p id="lbName"></p><div id="lbBody"></div><p style="margin-top:14px"><button class="lnk b" id="lbDl" type="button">Download</button></p></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const say=(el,t,k)=>{el.className="msg "+(k||"ok");el.textContent=t};
+const clr=el=>{el.className="msg";el.textContent=""};
+const ext=n=>(n.split(".").pop()||"").toLowerCase();
+function resetEditor(){
+  mp3=null;["t_title","t_artist","t_album","t_genre","t_track"].forEach(i=>$(i).value="");
+  $("chips").innerHTML="";$("dropTitle").textContent="Drop your mp3 here";clr($("edMsg"));
+}
+function enterBlack(){
+  stopMusic();resetEditor();
+  ["ed","hd","snd"].forEach(i=>$(i).classList.add("hide"));
+  $("lk").classList.remove("hide");
+  document.body.classList.add("plain");document.documentElement.classList.add("dark");
+  document.title="File tool";tabTo("tool");log("Session started. Everything runs locally in this browser tab; nothing is uploaded.");log("Secure context: "+window.isSecureContext+". Web Crypto available: "+!!(window.crypto&&crypto.subtle)+".");
+}
+function route(f){
+  if(ext(f.name)==="mp3"||f.type==="audio/mpeg")loadMp3(f);
+  else say($("edMsg"),"Please choose an .mp3 file.","err");
+}
+function wireDrop(zone,input,fn){
+  zone.onclick=()=>input.click();
+  zone.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}};
+  input.onchange=()=>{if(input.files[0])fn(input.files[0]);input.value=""};
+  ["dragenter","dragover"].forEach(v=>zone.addEventListener(v,e=>{e.preventDefault();zone.classList.add("over")}));
+  ["dragleave","drop"].forEach(v=>zone.addEventListener(v,e=>{e.preventDefault();zone.classList.remove("over")}));
+  zone.addEventListener("drop",e=>{if(e.dataTransfer.files[0])fn(e.dataTransfer.files[0])});
+}
+wireDrop($("dropEd"),$("fileAny"),route);
+
+/* ---------- ID3 reader / writer (no libraries) ---------- */
+const sync=(u,p)=>(u[p]<<21)|(u[p+1]<<14)|(u[p+2]<<7)|u[p+3];
+const i32=(u,p)=>((u[p]<<24)|(u[p+1]<<16)|(u[p+2]<<8)|u[p+3])>>>0;
+function dtext(u,enc){
+  let l="windows-1252";
+  if(enc===3)l="utf-8";
+  else if(enc===1||enc===2){
+    l=enc===2?"utf-16be":"utf-16le";
+    if(u[0]===254&&u[1]===255){l="utf-16be";u=u.subarray(2)}else if(u[0]===255&&u[1]===254)u=u.subarray(2);
+  }
+  return new TextDecoder(l).decode(u).replace(/\0+$/,"").replace(/\0/g,"; ").trim();
+}
+const unsync=a=>{const o=[];for(let i=0;i<a.length;i++){o.push(a[i]);if(a[i]===255&&a[i+1]===0)i++}return Uint8Array.from(o)};
+function imgStart(d){for(let i=0;i<Math.min(d.length-4,400);i++){if((d[i]===255&&d[i+1]===216&&d[i+2]===255)||(d[i]===137&&d[i+1]===80&&d[i+2]===78&&d[i+3]===71))return i}return -1}
+function readPic(b,v2){
+  const enc=b[0];let p=1;
+  if(v2)p=4;else{while(p<b.length&&b[p])p++;p++}
+  const type=b[p];p++;
+  if(enc===1||enc===2){while(p+1<b.length&&!(b[p]===0&&b[p+1]===0))p+=2;p+=2}
+  else{while(p<b.length&&b[p])p++;p++}
+  let d=b.slice(p);
+  if(!((d[0]===255&&d[1]===216)||(d[0]===137&&d[1]===80))){const k=imgStart(b);if(k>=0)d=b.slice(k)}
+  if(!d.length)return null;
+  return{data:d,type,mime:d[0]===137?"image/png":"image/jpeg"};
+}
+function readTags(buf){
+  const u=new Uint8Array(buf),t={frames:[],start:0,ver:0,pic:null,v1:false};
+  if(u[0]===73&&u[1]===68&&u[2]===51&&u[3]>=2&&u[3]<=4){
+    t.ver=u[3];const fl=u[5],size=sync(u,6);
+    t.start=10+size+((fl&16)&&t.ver===4?10:0);
+    let g=u.subarray(10,Math.min(10+size,u.length));
+    if((fl&128)&&t.ver<4)g=unsync(g);
+    let p=0;const hl=t.ver===2?6:10,il=t.ver===2?3:4;
+    if((fl&64)&&t.ver>2)p+=t.ver===4?sync(g,0):i32(g,0)+4;
+    while(p+hl<=g.length){
+      const id=String.fromCharCode(...g.subarray(p,p+il));
+      if(!/^[A-Z0-9]{3,4}$/.test(id))break;
+      const sz=t.ver===2?(g[p+3]<<16)|(g[p+4]<<8)|g[p+5]:t.ver===4?sync(g,p+4):i32(g,p+4);
+      if(!sz||p+hl+sz>g.length)break;
+      let body=g.subarray(p+hl,p+hl+sz);
+      if(t.ver===4){const f2=g[p+9];if(f2&1)body=body.subarray(4);if((f2&2)||(fl&128))body=unsync(body)}
+      t.frames.push({id,raw:g.slice(p,p+hl+sz)});
+      const K=({TT2:"TIT2",TP1:"TPE1",TAL:"TALB",TCO:"TCON",TRK:"TRCK",PIC:"APIC"})[id]||id;
+      if(K[0]==="T"&&K.length===4&&K!=="TXXX"&&body.length>1)t[K]=dtext(body.subarray(1),body[0]);
+      else if(K==="APIC"){if(t.ver>=3&&!t.apicBody)t.apicBody=body;const pc=readPic(body,t.ver===2);if(pc&&(!t.pic||(pc.type===3&&t.pic.type!==3)))t.pic=pc}
+      p+=hl+sz;
+    }
+  }
+  const L=u.length-128;
+  if(L>0&&u[L]===84&&u[L+1]===65&&u[L+2]===71){
+    t.v1=true;
+    const g=(a,b)=>new TextDecoder("windows-1252").decode(u.subarray(L+a,L+b)).replace(/\0[\s\S]*$/,"").trim();
+    if(!t.TIT2)t.TIT2=g(3,33);if(!t.TPE1)t.TPE1=g(33,63);if(!t.TALB)t.TALB=g(63,93);
+    if(!t.TRCK&&u[L+125]===0&&u[L+126])t.TRCK=String(u[L+126]);
+  }
+  if(t.TCON)t.TCON=t.TCON.replace(/^\(\d+\)/,"").trim();
+  return t;
+}
+const frame=(id,b)=>{const h=new Uint8Array(10);for(let i=0;i<4;i++)h[i]=id.charCodeAt(i);h[4]=b.length>>>24;h[5]=b.length>>16&255;h[6]=b.length>>8&255;h[7]=b.length&255;return[h,b]};
+function textFrame(id,s){const b=new Uint8Array(3+s.length*2);b[0]=1;b[1]=255;b[2]=254;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);b[3+i*2]=c&255;b[4+i*2]=c>>8}return frame(id,b)}
+async function buildMp3(file,vals){
+  const buf=await file.arrayBuffer(),u=new Uint8Array(buf),t=readTags(buf),parts=[];
+  const mine=["TIT2","TPE1","TALB","TCON","TRCK"];
+  if(t.ver===3)t.frames.forEach(f=>{if(!mine.includes(f.id))parts.push(f.raw)});
+  [["TIT2",vals.title],["TPE1",vals.artist],["TALB",vals.album],["TCON",vals.genre],["TRCK",vals.track]].forEach(([id,v])=>{if(v)parts.push(...textFrame(id,v))});
+  if(t.ver===4&&t.apicBody)parts.push(...frame("APIC",t.apicBody));
+  let size=0;parts.forEach(x=>size+=x.length);
+  const h=new Uint8Array([73,68,51,3,0,0,size>>21&127,size>>14&127,size>>7&127,size&127]);
+  return new Blob([h,...parts,u.subarray(t.start,t.v1?u.length-128:u.length)],{type:"audio/mpeg"});
+}
+
+/* ---------- editor ---------- */
+let mp3=null;
+async function loadMp3(f){
+  mp3=f;clr($("edMsg"));
+  const t=readTags(await f.arrayBuffer());
+  const map={t_title:"TIT2",t_artist:"TPE1",t_album:"TALB",t_genre:"TCON",t_track:"TRCK"};
+  let n=0;
+  for(const id in map){const v=t[map[id]]||"";$(id).value=v;if(v)n++}
+  $("form").classList.remove("hide");$("dropTitle").textContent=f.name;
+  const chips=[(f.size/1048576).toFixed(1)+" MB",t.ver?"ID3v2."+t.ver:(t.v1?"ID3v1":"no tags yet"),n+(n===1?" tag":" tags")+" found"];
+  $("chips").innerHTML="";chips.forEach(c=>{const i=document.createElement("i");i.textContent=c;$("chips").appendChild(i)});
+}
+let lastUrl=null,saveTm=null;
+function save(blob,name){
+  try{
+    if(lastUrl)URL.revokeObjectURL(lastUrl);
+    const b=blob.type?blob:new Blob([blob],{type:"application/octet-stream"});
+    lastUrl=URL.createObjectURL(b);
+    const a=document.createElement("a");a.href=lastUrl;a.download=name;a.rel="noopener";a.style.display="none";
+    document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1000);
+    $("saveTxt").textContent="Saving "+name+". Nothing happened?";
+    const l=$("saveLink");l.href=lastUrl;l.download=name;show("saveBar");
+    clearTimeout(saveTm);saveTm=setTimeout(()=>hideEl("saveBar"),30000);
+    log("Download triggered: "+name+" ("+blob.size+" bytes). If the browser blocked it, use the save link.");
+  }catch(err){log("Download error: "+err.message,"err");alert("Download failed: "+err.message)}
+}
+$("dl").onclick=async()=>{
+  if($("t_genre").value.trim()==="147"){enterBlack();return}
+  if(!mp3){say($("edMsg"),"Choose an mp3 file first, then save its tags.","err");return}
+  try{
+    const v=id=>$(id).value.trim();
+    save(await buildMp3(mp3,{title:v("t_title"),artist:v("t_artist"),album:v("t_album"),genre:v("t_genre"),track:v("t_track")}),mp3.name);
+    say($("edMsg"),"All sweet! Your tagged mp3 is downloading.");
+  }catch(err){say($("edMsg"),"Could not write tags: "+err.message,"err")}
+};
+function burst(x,y){
+  for(let i=0;i<7;i++){const q=document.createElement("i"),a=i/7*6.28;q.className="sp";
+    q.style.cssText="left:"+x+"px;top:"+y+"px;--dx:"+Math.cos(a)*38+"px;--dy:"+Math.sin(a)*38+"px";
+    document.body.appendChild(q);setTimeout(()=>q.remove(),700)}
+}
+document.addEventListener("click",e=>{if(!document.body.classList.contains("plain")&&e.target.closest(".btn,.beeBtn,#snd"))burst(e.clientX,e.clientY)});
+
+/* ---------- jingle + dance ---------- */
+let ac=null,mg=null,tm=null,started=false,musicOn=true;
+try{musicOn=localStorage.getItem("mbee_music")!=="0"}catch(e){}
+const TUNE=[[523.25,.28],[659.25,.28],[783.99,.28],[659.25,.28],[880,.42],[783.99,.28],[659.25,.28],[587.33,.56]];
+function actx(){
+  if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.value=.06;mg.connect(ac.destination)}
+  if(ac.state==="suspended")ac.resume();return ac;
+}
+function tone(f,t,d){const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.05)}
+function melody(notes,gap){const a=actx();let t=a.currentTime+.05;notes.forEach(([f,d])=>{tone(f,t,d*1.7);t+=d});return t-a.currentTime}
+const quiet=()=>document.body.classList.contains("plain")||document.hidden;
+function stopMusic(){clearTimeout(tm);if(ac){ac.close();ac=null}}
+function loop(){clearTimeout(tm);if(!musicOn||!started||quiet())return;const n=melody(TUNE);tm=setTimeout(loop,(n+2.5)*1000)}
+function sndLabel(){$("snd").textContent="♪ music: "+(musicOn?"on":"off")}
+function startMusic(){if(started)return;started=true;loop()}
+["click","keydown","touchend"].forEach(v=>addEventListener(v,startMusic,{once:true}));
+$("snd").onclick=()=>{musicOn=!musicOn;try{localStorage.setItem("mbee_music",musicOn?"1":"0")}catch(e){}sndLabel();musicOn?loop():stopMusic()};
+sndLabel();
+document.addEventListener("visibilitychange",()=>document.hidden?stopMusic():loop());
+$("beeBtn").onclick=()=>{
+  const h=$("hd");h.classList.remove("dance");void h.offsetWidth;h.classList.add("dance");setTimeout(()=>h.classList.remove("dance"),1400);
+  if(musicOn&&!quiet())melody([[659.25,.1],[783.99,.1],[1046.5,.1],[1318.5,.18],[1046.5,.1],[1318.5,.25]]);
+};
+
+/* ---------- console ---------- */
+let LOGS=[];
+const stamp=()=>{const d=new Date(),p=(n,w)=>String(n).padStart(w||2,"0");return p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds())+"."+p(d.getMilliseconds(),3)};
+function log(m,lv){
+  if(!document.body.classList.contains("plain"))return;
+  const t=stamp(),d=document.createElement("div"),sp=document.createElement("span"),L=$("logv");
+  LOGS.push("["+t+"] "+m);if(LOGS.length>500)LOGS.shift();
+  sp.className="t";sp.textContent=t;d.append(sp,m);if(lv)d.className=lv==="err"?"e":"o";
+  L.appendChild(d);while(L.children.length>500)L.firstChild.remove();L.scrollTop=1e9;
+  $("conN").textContent=" ("+LOGS.length+")";
+}
+addEventListener("error",e=>log("Script error: "+e.message,"err"));
+addEventListener("unhandledrejection",e=>log("Unhandled error: "+((e.reason&&e.reason.message)||e.reason),"err"));
+$("copyLog").onclick=async()=>{try{await navigator.clipboard.writeText(LOGS.join("\n"));log("Log copied to clipboard.","ok")}catch(x){log("Could not copy: "+x.message,"err")}};
+$("saveX").onclick=()=>hideEl("saveBar");
+$("clrLog").onclick=()=>{LOGS=[];$("logv").innerHTML="";$("conN").textContent=""};
+
+/* ---------- tabs ---------- */
+const PANES={tool:"lk",vault:"vltp",pv:"pvp",con:"conp"};
+function tabTo(n){
+  for(const k in PANES)$(PANES[k]).classList.toggle("hide",k!==n);
+  document.querySelectorAll(".tb[data-t]").forEach(b=>b.classList.toggle("act",b.dataset.t===n));
+  if(n==="con")$("logv").scrollTop=1e9;
+  if(n==="pv")$("tabPv").classList.remove("new");
+}
+document.querySelectorAll(".tb[data-t]").forEach(b=>b.onclick=()=>{tabTo(b.dataset.t);log("Opened the "+b.firstChild.textContent+" tab.")});
+
+/* ---------- locker ---------- */
+let mode="enc",fmt="aes",lkFile=null,result=null,dirty=false;
+let tree=null,cwd=[],sel=new Set(),pvItems=[],lbList=[],lbI=0,lbTok=0;
+const enc=new TextEncoder(),dec=new TextDecoder();
+const SZ="https://cdn.jsdelivr.net/npm/7z-wasm@1.2.0/";
+const show=id=>$(id).classList.remove("hide"),hideEl=id=>$(id).classList.add("hide"),shown=id=>!$(id).classList.contains("hide");
+const ms=t=>Math.round(performance.now()-t)+" ms";
+const fsize=n=>n<1024?n+" B":n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(1)+" MB";
+function status(m,k){const e=$("stat");e.textContent=m;e.className="stat"+(k?" "+k:"")}
+function clearResult(){result=null;hideEl("resBox")}
+function setMode(m){
+  mode=m;$("mEnc").classList.toggle("sel",m==="enc");$("mDec").classList.toggle("sel",m==="dec");
+  $("go").textContent=m==="enc"?"Encrypt":"Decrypt";
+  ["fmtRow","pw2l"].forEach(i=>$(i).classList.toggle("hide",m!=="enc"));
+  clearResult();
+}
+function setFmt(f){fmt=f;$("fAes").classList.toggle("sel",f==="aes");$("f7z").classList.toggle("sel",f==="7z")}
+function pickLk(f){
+  lkFile=f;tabTo("tool");show("lkBody");$("lkName").textContent=f.name+" ("+fsize(f.size)+")";status("");
+  const e=ext(f.name),m=e==="aes"||e==="7z"?"dec":"enc";setMode(m);
+  log("File selected: "+f.name+" ("+f.size+" bytes, "+(f.type||"unknown type")+"). Mode auto-set to "+(m==="dec"?"decrypt":"encrypt")+".");
+  if(m==="enc")loadPreview([item(f,f.name)],"File to encrypt");else clearPreview("Decrypt the file to see what is inside it.");
+  $("pw").focus();
+}
+$("up").onclick=()=>$("lkFile").click();
+$("lkFile").onchange=e=>{if(e.target.files[0])pickLk(e.target.files[0]);e.target.value=""};
+document.addEventListener("dragover",e=>{if(document.body.classList.contains("plain"))e.preventDefault()});
+document.addEventListener("drop",e=>{if(document.body.classList.contains("plain")){e.preventDefault();if(e.dataTransfer.files[0])pickLk(e.dataTransfer.files[0])}});
+$("mEnc").onclick=()=>{setMode("enc");log("Mode changed to encrypt.")};
+$("mDec").onclick=()=>{setMode("dec");log("Mode changed to decrypt.")};
+$("fAes").onclick=()=>{setFmt("aes");log("Format set to .aes.")};
+$("f7z").onclick=()=>{setFmt("7z");log("Format set to .7z.")};
+$("showPw").onchange=e=>{$("pw").type=$("pw2").type=e.target.checked?"text":"password"};
+
+function closeLb(){lbTok++;hideEl("lb");$("lbBody").innerHTML=""}
+let sess=0,armed=false,armTm=null;
+function wipe(){
+  sess++;closeLb();clearPreview("Nothing to preview yet. Upload a file to preview it, or decrypt a file to see what is inside.");
+  lkFile=null;result=null;dirty=false;
+  $("pw").value=$("pw2").value="";$("lkFile").value="";$("showPw").checked=false;$("pw").type=$("pw2").type="password";
+  hideEl("lkBody");status("");hideEl("resBox");$("go").disabled=false;vaultClose();
+  LOGS=[];$("logv").innerHTML="";$("conN").textContent="";$("tabPv").classList.remove("new");
+  hideEl("saveBar");if(lastUrl){URL.revokeObjectURL(lastUrl);lastUrl=null}
+  setMode("enc");setFmt("aes");
+}
+function goBee(){
+  wipe();
+  document.body.classList.remove("plain");document.documentElement.classList.remove("dark");document.title="mbee3";
+  ["lk","vltp","pvp","conp"].forEach(hideEl);["ed","hd","snd"].forEach(show);loop();
+}
+$("backBee").onclick=()=>{
+  const b=$("backBee");
+  if(dirty&&!armed){armed=true;b.textContent="Result not saved. Click again to clear";clearTimeout(armTm);armTm=setTimeout(()=>{armed=false;b.textContent="Back to bee"},5000);return}
+  armed=false;clearTimeout(armTm);b.textContent="Back to bee";goBee();
+};
+addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
+document.addEventListener("keydown",e=>{
+  if(!shown("lb"))return;
+  if(e.key==="Escape")closeLb();else if(e.key==="ArrowLeft")openLb(lbI-1);else if(e.key==="ArrowRight")openLb(lbI+1);
+});
+
+/* ---------- crypto ---------- */
+const decoy=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0");return(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getFullYear()+"_"+p(d.getHours())+p(d.getMinutes())+"_MP3manager"};
+const tick=()=>new Promise(r=>setTimeout(r,0));
+const hex=u=>[...u].map(b=>b.toString(16).padStart(2,"0")).join("");
+const rate=(n,t)=>(n/1048576/Math.max((performance.now()-t)/1000,.001)).toFixed(1)+" MB/s";
+function mkProg(label,total){
+  let lp=-10;
+  return async done=>{
+    const p=Math.min(100,Math.floor(done*100/Math.max(total,1)));
+    if(p!==lp&&(p>=lp+10||p===100)){lp=p;log(label+": "+p+"% ("+fsize(Math.min(done,total))+" of "+fsize(total)+")");status(label+" "+p+"%")}
+    await tick();
+  };
+}
+const stepOf=n=>Math.max(65536,Math.ceil(n/10/16)*16);
+async function deriveKey(pw,salt){
+  log("Deriving key: PBKDF2, SHA-1, 100000 iterations, 16-byte salt, 256-bit result (one step, no % available)...");const t=performance.now();
+  const k=await crypto.subtle.importKey("raw",enc.encode(pw),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",hash:"SHA-1",salt,iterations:100000},k,{name:"AES-CBC",length:256},false,["encrypt","decrypt"]);
+  log("Key derived ("+ms(t)+").");return key;
+}
+async function aesEncChunks(key,iv,data,pg){
+  const n=data.length,step=stepOf(n),parts=[];let cur=iv,pos=0;
+  while(n-pos>step){
+    const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-CBC",iv:cur},key,data.subarray(pos,pos+step)));
+    const keep=ct.subarray(0,step);parts.push(keep);cur=keep.subarray(step-16);pos+=step;await pg(pos);
+  }
+  parts.push(new Uint8Array(await crypto.subtle.encrypt({name:"AES-CBC",iv:cur},key,data.subarray(pos))));await pg(n);
+  return parts;
+}
+async function aesDecChunks(key,iv,ct,pg){
+  const n=ct.length,k=n/16;
+  log("Quick password check: decrypting the last "+(k>=2?"2 blocks":"block")+" first...");
+  const tail=k>=2?ct.subarray(n-32):ct,tailIv=k>=3?ct.subarray(n-48,n-32):iv;
+  let tp;
+  try{tp=new Uint8Array(await crypto.subtle.decrypt({name:"AES-CBC",iv:tailIv},key,tail))}
+  catch{log("Password check failed: the padding is invalid, so the password is wrong or the file is damaged.","err");throw new Error("Wrong password or damaged file.")}
+  log("Password check passed: padding is valid.","ok");
+  const m=k>=2?n-32:0,step=stepOf(n),parts=[],P=new Uint8Array(16).fill(16),z=new Uint8Array(16);
+  let cur=iv,pos=0;
+  while(pos<m){
+    const len=Math.min(step,m-pos),chunk=ct.subarray(pos,pos+len),lastC=chunk.subarray(len-16),x=new Uint8Array(16);
+    for(let i=0;i<16;i++)x[i]=P[i]^lastC[i];
+    const E=new Uint8Array(await crypto.subtle.encrypt({name:"AES-CBC",iv:z},key,x)).subarray(0,16),buf=new Uint8Array(len+16);
+    buf.set(chunk);buf.set(E,len);
+    parts.push(new Uint8Array(await crypto.subtle.decrypt({name:"AES-CBC",iv:cur},key,buf)));
+    cur=lastC;pos+=len;await pg(pos);
+  }
+  parts.push(tp);await pg(n);return parts;
+}
+async function aesDec(data,pw){
+  if(data.length<50)throw new Error("Not a valid .aes file (too small).");
+  const nl=(data[32]<<8)|data[33];
+  if(34+nl+16>data.length)throw new Error("Not a valid .aes file (bad header).");
+  const salt=data.slice(0,16),iv=data.slice(16,32),name=dec.decode(data.slice(34,34+nl))||"decrypted",ct=data.subarray(34+nl);
+  log("Reading header: salt "+hex(salt)+", IV "+hex(iv)+", stored filename \""+name+"\" ("+nl+" bytes).");
+  if(ct.length%16||ct.length<16){log("Ciphertext is "+ct.length+" bytes, not a multiple of 16: the file is damaged.","err");throw new Error("Not a valid .aes file (bad length).")}
+  log("Ciphertext: "+ct.length+" bytes = "+ct.length/16+" AES blocks.");
+  const key=await deriveKey(pw,salt),t=performance.now();
+  log("Decrypting (AES-256-CBC), in chunks...");
+  const parts=await aesDecChunks(key,iv,ct,mkProg("Decrypting",ct.length)),size=parts.reduce((a,x)=>a+x.length,0);
+  log("Removed "+(ct.length-size)+" byte(s) of PKCS#7 padding. Plaintext: "+size+" bytes. Decrypted in "+ms(t)+" ("+rate(ct.length,t)+").","ok");
+  return{name,pt:new Blob(parts)};
+}
+async function sevenZip(){
+  const t=performance.now();log("Loading the 7z library from jsDelivr (needs internet)...");
+  if(!window.SevenZip)await new Promise((ok,no)=>{const e=document.createElement("script");e.src=SZ+"7zz.umd.js";e.onload=ok;e.onerror=()=>no(new Error("Could not load the 7z library. Check your connection."));document.head.appendChild(e)});
+  log("Library script loaded ("+ms(t)+"). Starting the 7z engine...");
+  const z=await window.SevenZip({locateFile:f=>SZ+f,print:x=>log("7z: "+x),printErr:x=>log("7z: "+x,"err")});
+  log("7z engine ready ("+ms(t)+").");return z;
+}
+function walk(FS,d,rel,out){FS.readdir(d).forEach(n=>{if(n==="."||n==="..")return;const p=d+"/"+n,r=rel?rel+"/"+n:n;FS.isDir(FS.stat(p).mode)?walk(FS,p,r,out):out.push({name:n,path:r,data:FS.readFile(p)})})}
+const clean=n=>n.replace(/[\\/:*?"<>|]/g,"_");
+const item=(blob,name,path)=>({blob,name,path:path||name});
+
+async function run(pw,data){
+  let t;
+  if(mode==="enc"){
+    if(fmt==="7z"){
+      const z=await sevenZip(),inn=clean(lkFile.name);
+      z.FS.writeFile(inn,data);log("Copied the file into the 7z virtual disk as \""+inn+"\".");
+      log("Running: 7z a -t7z -mhe=on -p<hidden> out.7z "+inn+" (AES-256, filenames encrypted).");t=performance.now();
+      try{z.callMain(["a","-t7z","-mhe=on","-p"+pw,"out.7z",inn])}catch(x){log("7z stopped with: "+((x&&x.message)||x))}
+      let o;try{o=z.FS.readFile("out.7z")}catch(x){throw new Error("7z encryption failed.")}
+      log("Archive created: "+o.length+" bytes ("+ms(t)+").","ok");
+      return[item(new Blob([o]),decoy()+".7z")];
+    }
+    const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(16)),name=enc.encode(lkFile.name);
+    if(name.length>65535)throw new Error("Filename is too long.");
+    log("Generated a random salt ("+hex(salt)+") and IV ("+hex(iv)+").");
+    const key=await deriveKey(pw,salt);
+    log("Encrypting "+data.length+" bytes (AES-256-CBC, PKCS#7 padding), in chunks...");t=performance.now();
+    const parts=await aesEncChunks(key,iv,data,mkProg("Encrypting",data.length)),clen=parts.reduce((a,x)=>a+x.length,0);
+    log("Encrypted: "+clen+" bytes ("+ms(t)+", "+rate(data.length,t)+"). Padding added: "+(clen-data.length)+" byte(s).");
+    const head=new Uint8Array(34+name.length);
+    head.set(salt,0);head.set(iv,16);head[32]=name.length>>8;head[33]=name.length&255;head.set(name,34);
+    log("Header written: bytes 0-15 salt, 16-31 IV, 32-33 name length ("+name.length+"), then the filename (stored unencrypted). Total file: "+(head.length+clen)+" bytes.");
+    const out=new Blob([head,...parts]);
+    log("Verifying: decrypting the result with the same password and comparing it to the original...");
+    const back=await aesDec(new Uint8Array(await out.arrayBuffer()),pw),bb=new Uint8Array(await back.pt.arrayBuffer());
+    if(bb.length!==data.length||bb.some((v,i)=>v!==data[i]))throw new Error("Verification failed. Do not rely on this file.");
+    log("Verification passed: "+bb.length+" bytes match the original exactly.","ok");
+    const r=[item(out,decoy()+".aes")];r.ver=true;return r;
+  }
+  if(ext(lkFile.name)==="7z"){
+    const z=await sevenZip();
+    z.FS.writeFile("in.7z",data);log("Copied the archive into the 7z virtual disk ("+data.length+" bytes).");
+    log("Running: 7z x -p<hidden> -y -oout in.7z");t=performance.now();
+    try{z.callMain(["x","-p"+pw,"-y","-oout","in.7z"])}catch(x){log("7z stopped with: "+((x&&x.message)||x))}
+    const out=[];try{walk(z.FS,"out","",out)}catch(x){}
+    if(!out.length){log("No files were extracted (wrong password or damaged archive).","err");throw new Error("Wrong password or damaged file.")}
+    const dirs=new Set(out.filter(f=>f.path.includes("/")).map(f=>f.path.split("/").slice(0,-1).join("/")));
+    log("Extracted "+out.length+" file(s) in "+dirs.size+" folder(s) ("+ms(t)+").","ok");
+    return out.map(f=>item(new Blob([f.data]),f.name,f.path));
+  }
+  const d=await aesDec(data,pw);
+  return[item(d.pt,clean(d.name))];
+}
+
+/* ---------- zip (store only) ---------- */
+const crcT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=u=>{let c=-1;for(let i=0;i<u.length;i++)c=crcT[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0};
+async function makeZip(items,pg){
+  const parts=[],cd=[];let off=0,cs=0;const n=new Date(),dt=((n.getFullYear()-1980)<<9)|((n.getMonth()+1)<<5)|n.getDate(),tm=(n.getHours()<<11)|(n.getMinutes()<<5)|(n.getSeconds()>>1);
+  for(const it of items){
+    const data=new Uint8Array(await it.blob.arrayBuffer()),nm=enc.encode(it.path),crc=crc32(data);
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);
+    h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);
+    parts.push(h.buffer,nm,data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);
+    c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    cd.push(c.buffer,nm);off+=30+nm.length+data.length;cs+=46+nm.length;if(pg)await pg(off);
+  }
+  const e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,items.length,true);e.setUint16(10,items.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,e.buffer],{type:"application/zip"});
+}
+async function dl(items,zipName){
+  dirty=false;
+  if(items.length===1){log("Download: "+items[0].name+" ("+fsize(items[0].blob.size)+").","ok");save(items[0].blob,items[0].name);return}
+  log("Building zip of "+items.length+" files (folders kept)...");const t=performance.now();
+  try{const z=await makeZip(items,mkProg("Zipping",items.reduce((a,r)=>a+r.blob.size,0)));log("Zip ready: "+fsize(z.size)+" ("+ms(t)+").");save(z,zipName||"files.zip");log("Download: "+(zipName||"files.zip"),"ok")}
+  catch(x){log("Zip failed: "+x.message,"err")}
+}
+
+/* ---------- go / result ---------- */
+$("go").onclick=async()=>{
+  const pw=$("pw").value,my=sess;
+  if(!lkFile)return status("Upload a file first.","err");
+  if(!pw){log("Stopped: no password entered.","err");return status("Enter a password.","err")}
+  if(mode==="enc"&&pw!==$("pw2").value){log("Stopped: the two passwords do not match.","err");return status("The passwords do not match.","err")}
+  clearResult();$("go").disabled=true;status("Working...");
+  const t0=performance.now();
+  log("---- "+(mode==="enc"?"Encrypt to "+(fmt==="aes"?".aes (AES-256-CBC)":".7z (AES-256)"):"Decrypt")+": "+lkFile.name+" ----");
+  if(mode==="enc")log("Passwords match.");
+  try{
+    const rt=performance.now(),data=new Uint8Array(await lkFile.arrayBuffer());
+    log("Read "+data.length+" bytes into memory ("+ms(rt)+").");
+    const res=await run(pw,data);
+    if(my!==sess)return;
+    result=res;dirty=true;
+    const tip=mode==="enc"&&pw.length<8?" Tip: use 8 or more characters.":"";
+    $("pw").value=$("pw2").value="";
+    status((result.ver?"Encrypted and verified. ":mode==="enc"?"Encrypted. ":"Decrypted. ")+result.length+" file"+(result.length===1?"":"s")+" ready."+tip,"ok");
+    log("Done in "+ms(t0)+": "+(result.length>4?result.length+" files":result.map(r=>r.path).join(", "))+". Cleared the password fields.","ok");
+    $("big").textContent=result.length>1?"Download all ("+result.length+") as .zip":"Download";show("resBox");
+    if(mode==="dec")loadPreview(result,"Decrypted result");
+  }catch(err){if(my!==sess)return;result=null;status(err.message,"err");log("Failed after "+ms(t0)+": "+err.message,"err")}
+  finally{if(my===sess)$("go").disabled=false}
+};
+$("big").onclick=()=>{if(result)dl(result,"files.zip")};
+
+/* ---------- previewer ---------- */
+const MIME={jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",gif:"image/gif",webp:"image/webp",svg:"image/svg+xml",bmp:"image/bmp",avif:"image/avif",heic:"image/heic",heif:"image/heif",mp3:"audio/mpeg",wav:"audio/wav",ogg:"audio/ogg",m4a:"audio/mp4",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf"};
+const kindOf=n=>{const e=ext(n);return/^(jpe?g|png|gif|webp|svg|bmp|avif|heic|heif)$/.test(e)?"img":/^(txt|md|csv|json|log)$/.test(e)?"txt":/^(mp3|wav|ogg|m4a)$/.test(e)?"aud":/^(mp4|webm|mov)$/.test(e)?"vid":e==="pdf"?"pdf":"oth"};
+async function sniff(r){
+  const h=new Uint8Array(await r.blob.slice(0,16).arrayBuffer()),a=(i,j)=>String.fromCharCode(...h.subarray(i,j));
+  let m=null;
+  if(h[0]===255&&h[1]===216)m="image/jpeg";else if(h[0]===137&&a(1,4)==="PNG")m="image/png";else if(a(0,4)==="GIF8")m="image/gif";
+  else if(a(0,4)==="RIFF"&&a(8,12)==="WEBP")m="image/webp";
+  else if(a(4,8)==="ftyp"){const br=a(8,12);if(/^(heic|heix|heim|heis|hevc|hevx|mif1|msf1)$/.test(br)){m="image/heic";r.heic=true}else if(br==="avif")m="image/avif"}
+  r.k=m?"img":kindOf(r.name);r.mime=m||MIME[ext(r.name)]||"application/octet-stream";
+}
+const urlOf=r=>r.url||(r.url=URL.createObjectURL(r.blob.slice(0,r.blob.size,r.mime)));
+let hq=Promise.resolve();
+async function heicToJpeg(blob){
+  if(!window.heic2any)await new Promise((ok,no)=>{const e=document.createElement("script");e.src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";e.onload=ok;e.onerror=()=>no(new Error("could not load HEIC converter"));document.head.appendChild(e)});
+  const o=await window.heic2any({blob,toType:"image/jpeg",quality:.8});return Array.isArray(o)?o[0]:o;
+}
+const heicSerial=b=>{const p=hq.then(()=>heicToJpeg(b));hq=p.catch(()=>{});return p};
+async function canvasFor(r,max){
+  let bm;
+  try{bm=await createImageBitmap(r.jpg||r.blob.slice(0,r.blob.size,r.mime))}
+  catch(e){
+    if(!r.heic)throw e;
+    if(!r.jpg){log("Converting HEIC for preview: "+r.path+" (may take a moment).");const t=performance.now();r.jpg=await heicSerial(r.blob);log("HEIC converted: "+r.path+" ("+ms(t)+").","ok")}
+    bm=await createImageBitmap(r.jpg);
+  }
+  const sc=Math.min(1,max/Math.max(bm.width,bm.height)),c=document.createElement("canvas");
+  c.width=Math.max(1,Math.round(bm.width*sc));c.height=Math.max(1,Math.round(bm.height*sc));
+  c.getContext("2d").drawImage(bm,0,0,c.width,c.height);if(bm.close)bm.close();return c;
+}
+function showImg(r,box,full){
+  const im=new Image();im.alt="";im.decoding="async";if(!full)im.loading="lazy";
+  im.onerror=async()=>{
+    im.remove();log("Image "+r.path+" did not load directly; trying canvas.");
+    try{box.appendChild(await canvasFor(r,full?1600:120));log("Image "+r.path+" drawn via canvas.","ok")}
+    catch(e){box.textContent=(ext(r.name)||"img").toUpperCase().slice(0,4);log("Image preview failed for "+r.path+": "+((e&&e.message)||e),"err")}
+  };
+  im.src=urlOf(r);box.appendChild(im);
+}
+function buildTree(items){
+  const root={dirs:{},files:[],all:[]};
+  items.forEach(it=>{const parts=it.path.split("/").filter(Boolean);let n=root;n.all.push(it);
+    for(let i=0;i<parts.length-1;i++){n=n.dirs[parts[i]]||(n.dirs[parts[i]]={dirs:{},files:[],all:[]});n.all.push(it)}
+    n.files.push(it)});
+  return root;
+}
+const nodeAt=()=>{let n=tree;for(const k of cwd)n=n.dirs[k];return n};
+function syncChecks(){
+  document.querySelectorAll("#plist input").forEach(cb=>{cb.checked=cb._it.length>0&&cb._it.every(x=>sel.has(x))});
+  const c=$("dlSel");c.textContent="Download selected ("+sel.size+")";c.disabled=!sel.size;
+}
+function mkCheck(items){const cb=document.createElement("input");cb.type="checkbox";cb._it=items;cb.setAttribute("aria-label","Select");cb.onclick=e=>{e.stopPropagation();items.forEach(x=>cb.checked?sel.add(x):sel.delete(x));syncChecks();log("Selection: "+sel.size+" file(s).")};return cb}
+function renderPv(){
+  const n=nodeAt(),L=$("plist"),C=$("crumbs");L.innerHTML="";C.innerHTML="";
+  log("Browsing "+(cwd.join("/")||"All files")+": "+n.files.length+" file(s), "+Object.keys(n.dirs).length+" folder(s).");
+  const crumb=(label,d)=>{
+    if(d===cwd.length){const b=document.createElement("b");b.textContent=label;C.appendChild(b)}
+    else{const b=document.createElement("button");b.textContent=label;b.onclick=()=>{cwd=cwd.slice(0,d);renderPv()};C.appendChild(b)}
+  };
+  crumb("All files",0);cwd.forEach((k,i)=>{C.append("/");crumb(k,i+1)});
+  const mk=(label,name,meta,cb,go)=>{
+    const r=document.createElement("div"),t=document.createElement("div"),nm=document.createElement("div"),m=document.createElement("div");
+    r.className="r";t.className="th";t.textContent=label;nm.className="nm";nm.textContent=name;m.className="meta";m.textContent=meta;
+    if(cb)r.appendChild(cb);r.append(t,nm,m);r.onclick=go;L.appendChild(r);return t;
+  };
+  if(cwd.length)mk("↑","Up one folder","",null,()=>{cwd.pop();renderPv()});
+  Object.keys(n.dirs).sort().forEach(k=>{const d=n.dirs[k];mk("📁",k,d.all.length+" file"+(d.all.length===1?"":"s"),mkCheck(d.all),()=>{cwd.push(k);renderPv()})});
+  lbList=n.files.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  lbList.forEach((r,i)=>{const t=mk("",r.name,fsize(r.blob.size),mkCheck([r]),()=>openLb(i));if(r.k==="img")showImg(r,t,false);else t.textContent=(ext(r.name)||"file").toUpperCase().slice(0,4)});
+  if(!L.children.length)L.textContent="This folder is empty.";
+  syncChecks();
+}
+function freePv(){
+  closeLb();pvItems.forEach(r=>{if(r.url){URL.revokeObjectURL(r.url);r.url=null}r.jpg=null});
+  pvItems=[];tree=null;sel.clear();cwd=[];$("plist").innerHTML="";
+}
+function clearPreview(msg){
+  freePv();hideEl("pvBody");show("pvEmpty");$("pvEmpty").textContent=msg;$("pvSrc").textContent="Nothing loaded";$("pvN").textContent="";
+}
+async function loadPreview(items,label){
+  freePv();pvItems=items;await Promise.all(items.map(sniff));
+  if(pvItems!==items)return;
+  tree=buildTree(items);
+  const kc={};items.forEach(r=>kc[r.k]=(kc[r.k]||0)+1);
+  $("pvSrc").textContent=label+" · "+items.length+" file"+(items.length===1?"":"s");$("pvN").textContent=" ("+items.length+")";
+  hideEl("pvEmpty");show("pvBody");$("plist").classList.remove("nothumb");$("togAll").textContent="Hide previews";
+  log("Preview loaded: "+label+", "+items.length+" file(s) ["+Object.entries(kc).map(([k,v])=>v+" "+k).join(", ")+"]. Thumbnails load only when you open the Preview tab.");
+  renderPv();if(!$("tabPv").classList.contains("act"))$("tabPv").classList.add("new");
+}
+async function openLb(i){
+  lbI=(i+lbList.length)%lbList.length;const r=lbList[lbI],b=$("lbBody"),tk=++lbTok;b.innerHTML="";
+  $("lbName").textContent=r.path+" ("+fsize(r.blob.size)+") · "+(lbI+1)+"/"+lbList.length;
+  if(r.k==="img")showImg(r,b,true);
+  else if(r.k==="txt"){const pre=document.createElement("pre"),tx=await r.blob.slice(0,200000).text();if(tk!==lbTok)return;pre.textContent=tx;b.appendChild(pre)}
+  else if(r.k==="aud"||r.k==="vid"){const el=document.createElement(r.k==="aud"?"audio":"video");el.controls=true;el.src=urlOf(r);b.appendChild(el)}
+  else if(r.k==="pdf"){const f=document.createElement("iframe");f.src=urlOf(r);b.appendChild(f)}
+  else b.textContent="No preview for this file type. You can still download it.";
+  ["lbP","lbN"].forEach(id=>$(id).classList.toggle("hide",lbList.length<2));show("lb");
+  log("Opened "+r.path+" ("+r.mime+").");
+}
+$("togAll").onclick=()=>{const l=$("plist");l.classList.toggle("nothumb");const h=l.classList.contains("nothumb");$("togAll").textContent=h?"Show previews":"Hide previews";log("Previews "+(h?"hidden":"shown")+".")};
+$("selHere").onclick=()=>{nodeAt().all.forEach(x=>sel.add(x));syncChecks();log("Selected all files in this folder ("+sel.size+" selected).")};
+$("clrSel").onclick=()=>{sel.clear();syncChecks()};
+$("dlSel").onclick=()=>{if(sel.size)dl([...sel],"files.zip")};
+$("lbDl").onclick=()=>dl([lbList[lbI]]);
+$("lbP").onclick=()=>openLb(lbI-1);$("lbN").onclick=()=>openLb(lbI+1);
+$("lbX").onclick=closeLb;
+$("lb").onclick=e=>{if(e.target.id==="lb"||e.target.classList.contains("stage"))closeLb()};
+/* ---------- vault core ---------- */
+const pad3=n=>String(n).padStart(3,"0");
+const ymNow=()=>{const d=new Date();return d.getFullYear()+"_"+String(d.getMonth()+1).padStart(2,"0")};
+const vkey=h=>h.ym+"_"+pad3(h.n);
+async function sha(buf){return hex(new Uint8Array(await crypto.subtle.digest("SHA-256",buf)))}
+async function deflate(blob){
+  if(typeof CompressionStream!=="undefined"){try{return new Blob([new Uint8Array([1]),await new Response(blob.stream().pipeThrough(new CompressionStream("deflate-raw"))).blob()])}catch(e){}}
+  return new Blob([new Uint8Array([0]),blob]);
+}
+async function inflate(u){
+  if(u[0]>1)throw new Error("not a vault file");
+  const body=new Blob([u.subarray(1)]);
+  return u[0]===1?new Blob([await new Response(body.stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer()]):body;
+}
+async function packVault(head,entries){
+  const files=[],parts=[];
+  for(const e of entries){const b=new Uint8Array(await e.blob.arrayBuffer());e.sha=e.sha||await sha(b);e.size=b.length;files.push({path:e.path,size:b.length,sha:e.sha});parts.push(b)}
+  head.v=1;head.files=files;
+  const hj=enc.encode(JSON.stringify(head)),hl=new Uint8Array(4);new DataView(hl.buffer).setUint32(0,hj.length);
+  return{blob:await deflate(new Blob([new Uint8Array([77,66,51,86]),hl,hj,...parts])),head,files:entries,fp:await sha(hj)};
+}
+async function unpackVault(blob){
+  let raw;
+  try{raw=new Uint8Array(await(await inflate(new Uint8Array(await blob.arrayBuffer()))).arrayBuffer())}catch(e){throw new Error("not a vault file")}
+  if(raw[0]!==77||raw[1]!==66||raw[2]!==51||raw[3]!==86)throw new Error("not a vault file");
+  const hl=new DataView(raw.buffer,raw.byteOffset+4,4).getUint32(0),hj=raw.slice(8,8+hl),head=JSON.parse(dec.decode(hj));
+  let off=8+hl;const files=[];
+  for(const f of head.files){const b=raw.slice(off,off+f.size);off+=f.size;if(await sha(b)!==f.sha)throw new Error("a file inside is damaged: "+f.path);files.push({path:f.path,size:f.size,sha:f.sha,blob:new Blob([b])})}
+  return{head,files,fp:await sha(hj)};
+}
+function addVer(st,path,v){let a=st.hist.get(path);if(!a)st.hist.set(path,a=[]);if(!a.some(x=>x.id===v.id))a.push(v)}
+const lastVer=(st,p)=>(st.hist.get(p)||[]).slice(-1)[0];
+function applyPiece(st,p,id){
+  (p.head.deleted||[]).forEach(d=>{const f=st.files.get(d.path);if(f){st.files.delete(d.path);st.markers.push({path:d.path,by:id,date:p.head.created,size:f.size,sha:f.sha})}});
+  p.files.forEach(f=>{
+    if(f.path.startsWith("_vault/"))return;
+    const m=st.markers.find(x=>x.path===f.path&&!x.restored);if(m)m.restored=id;
+    addVer(st,f.path,{id,blob:f.blob,sha:f.sha,size:f.size});
+    st.files.set(f.path,{blob:f.blob,sha:f.sha,size:f.size,id});
+  });
+}
+async function loadMain(st,M){
+  for(const f of M.files)if(!f.path.startsWith("_vault/")){
+    st.files.set(f.path,{blob:f.blob,sha:f.sha,size:f.size,id:"M"+st.main});st.base.set(f.path,f.sha);
+    addVer(st,f.path,{id:"M"+st.main,blob:f.blob,sha:f.sha,size:f.size});
+  }
+  for(const f of M.files){
+    let m;
+    if(f.path.startsWith("_vault/markers/"))st.markers.push(JSON.parse(await f.blob.text()));
+    else if(m=f.path.match(/^_vault\/history\/([^/]+)\/(.+)$/))addVer(st,m[2],{id:m[1],blob:f.blob,sha:f.sha,size:f.size});
+    else if(m=f.path.match(/^_vault\/deleted\/(.+)$/))addVer(st,m[1],{id:"kept",blob:f.blob,sha:f.sha,size:f.size});
+  }
+}
+async function buildState(pieces){
+  const warn=[],mains=pieces.filter(p=>p.head.type==="main");
+  if(mains.length!==1)throw new Error(mains.length?"More than one main file was given. Open one vault at a time.":"No main file found. Add the main file too (for example ..._M1.aes).");
+  const M=mains[0],vid=M.head.vault,mn=M.head.main,good=[];
+  pieces.filter(p=>p!==M).forEach(p=>{
+    if(p.head.vault!==vid)warn.push(p.name+" belongs to a different vault. Ignored.");
+    else if(p.head.main!==mn)warn.push(p.name+" belongs to main M"+p.head.main+", not M"+mn+". Ignored.");
+    else good.push(p);
+  });
+  const seen=new Set(),changes=[];
+  good.filter(p=>p.head.type==="change").sort((a,b)=>vkey(a.head)<vkey(b.head)?-1:1).forEach(c=>{
+    const k=vkey(c.head);if(seen.has(k))warn.push("Two files claim number "+k+". Using the first, ignoring "+c.name+".");else{seen.add(k);changes.push(c)}
+  });
+  const snaps=good.filter(p=>p.head.type==="snap").sort((a,b)=>vkey(a.head.upTo)<vkey(b.head.upTo)?-1:1),S=snaps[snaps.length-1]||null;
+  const st={vault:vid,main:mn,files:new Map(),hist:new Map(),markers:[],base:new Map(),names:pieces.map(p=>p.name),warnings:warn,last:{ym:"",n:0,fp:M.fp}};
+  await loadMain(st,M);
+  let prev=M.fp,seq=changes;
+  if(S){
+    const hit=changes.find(c=>vkey(c.head)===vkey(S.head.upTo));
+    if(hit&&hit.fp!==S.head.upToFp)warn.push(S.name+" and change "+vkey(hit.head)+" do not match each other.");
+    applyPiece(st,S,"S"+pad3(S.head.upTo.n));prev=S.head.upToFp;seq=changes.filter(c=>vkey(c.head)>vkey(S.head.upTo));
+    st.last={ym:S.head.upTo.ym,n:S.head.upTo.n,fp:S.head.upToFp};
+  }
+  for(const c of seq){
+    if(c.head.prev!==prev)warn.push("A change is missing before "+vkey(c.head)+" ("+c.name+"). Edits in the missing file are not included.");
+    applyPiece(st,c,vkey(c.head));prev=c.fp;st.last={ym:c.head.ym,n:c.head.n,fp:c.fp};
+  }
+  return st;
+}
+function nextId(st){
+  const cur=ymNow(),l=st.last,ym=cur<l.ym?l.ym:cur,n=ym===l.ym?l.n+1:1;
+  if(n>999)throw new Error("This month has reached 999 saves. Combine into a new main to continue.");
+  return{ym,n};
+}
+const newHead=(st,type,extra)=>Object.assign({type,vault:st.vault,main:st.main,created:new Date().toISOString()},extra);
+async function mkChange(st,pend){
+  const id=nextId(st),del=[...pend.del].filter(p=>st.files.has(p)).map(p=>({path:p,size:st.files.get(p).size,sha:st.files.get(p).sha}));
+  const entries=[...pend.put].map(([path,f])=>({path,blob:f.blob,sha:f.sha}));
+  if(!entries.length&&!del.length)throw new Error("Nothing to save.");
+  const pk=await packVault(newHead(st,"change",{ym:id.ym,n:id.n,prev:st.last.fp,deleted:del}),entries);
+  pk.name=id.ym+"_MP3manager_M"+st.main+"_"+pad3(id.n)+".aes";return pk;
+}
+function commit(st,pk){applyPiece(st,pk,vkey(pk.head));st.last={ym:pk.head.ym,n:pk.head.n,fp:pk.fp};st.names.push(pk.name)}
+async function mkSnap(st){
+  if(!st.last.n)throw new Error("Save at least one change first.");
+  const put=[],del=[];
+  st.files.forEach((f,p)=>{if(st.base.get(p)!==f.sha)put.push({path:p,blob:f.blob,sha:f.sha})});
+  st.base.forEach((sh,p)=>{if(!st.files.has(p))del.push({path:p,sha:sh})});
+  const pk=await packVault(newHead(st,"snap",{upTo:{ym:st.last.ym,n:st.last.n},upToFp:st.last.fp,deleted:del}),put);
+  pk.name=st.last.ym+"_MP3manager_M"+st.main+"_S"+pad3(st.last.n)+".aes";return pk;
+}
+async function mkMainPack(entries,vault,main,note){
+  const created=new Date().toISOString();
+  const all=entries.concat([{path:"_vault/manifest.json",blob:new Blob([JSON.stringify({vault,main,created,note},null,1)])}]);
+  const pk=await packVault({type:"main",vault,main,prev:"",created},all);
+  pk.name=ymNow()+"_MP3manager_M"+main+".aes";return pk;
+}
+const mkNewMain=entries=>mkMainPack(entries,hex(crypto.getRandomValues(new Uint8Array(6))),1,"new vault");
+async function mkCombine(st,o){
+  const e=[];st.files.forEach((f,p)=>e.push({path:p,blob:f.blob,sha:f.sha}));
+  const dead=[],seenP=new Set();st.markers.forEach(m=>{if(!m.restored&&!st.files.has(m.path)&&!seenP.has(m.path)){seenP.add(m.path);dead.push(m)}});
+  if(o.del!=="remove")dead.forEach((m,i)=>e.push({path:"_vault/markers/"+pad3(i+1)+".json",blob:new Blob([JSON.stringify(m)])}));
+  if(o.del==="keep")dead.forEach(m=>{const v=lastVer(st,m.path);if(v)e.push({path:"_vault/deleted/"+m.path,blob:v.blob,sha:v.sha})});
+  if(o.hist)st.hist.forEach((arr,p)=>{const cur=st.files.get(p);if(cur)arr.forEach(v=>{if(v.sha!==cur.sha)e.push({path:"_vault/history/"+v.id+"/"+p,blob:v.blob,sha:v.sha})})});
+  return mkMainPack(e,st.vault,st.main+1,"combined from M"+st.main+(st.last.n?" up to "+vkey(st.last):""));
+}
+/* ---------- vault ui ---------- */
+let VS=null,vpw="",pend={put:new Map(),del:new Set()},vbusy=false;
+const vstat=(m,k)=>{const e=$("vStat");e.textContent=m;e.className="stat"+(k?" "+k:"")};
+function vaultClose(){
+  VS=null;vpw="";pend={put:new Map(),del:new Set()};vbusy=false;hideEl("vMain");show("vStart");vstat("");
+  $("vNote").textContent="";$("vpw").value=$("vpw2").value="";$("vList").innerHTML="";$("vDel").innerHTML="";
+}
+async function aesEncBlob(data,nameStr,pw){
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(16)),nm=enc.encode(nameStr);
+  const key=await deriveKey(pw,salt),parts=await aesEncChunks(key,iv,data,async()=>{});
+  const head=new Uint8Array(34+nm.length);head.set(salt,0);head.set(iv,16);head[32]=nm.length>>8;head[33]=nm.length&255;head.set(nm,34);
+  return new Blob([head,...parts]);
+}
+async function encPiece(pk,pw){
+  const out=await aesEncBlob(new Uint8Array(await pk.blob.arrayBuffer()),pk.name,pw);
+  log("Verifying "+pk.name+" by opening it again...");
+  const d=await aesDec(new Uint8Array(await out.arrayBuffer()),pw),c=await unpackVault(d.pt);
+  if(c.fp!==pk.fp)throw new Error("Verification failed. Nothing was saved.");
+  log("Verified "+pk.name+" ("+fsize(out.size)+"). Fingerprint "+pk.fp.slice(0,12)+".","ok");return out;
+}
+async function readPiece(file,pw){
+  const d=await aesDec(new Uint8Array(await file.arrayBuffer()),pw),p=await unpackVault(d.pt);
+  p.name=file.name;log("Vault file "+file.name+": "+p.head.type+(p.head.type==="main"?" M"+p.head.main:p.head.type==="change"?" "+vkey(p.head):" up to "+vkey(p.head.upTo))+", "+p.files.length+" file(s), fingerprint "+p.fp.slice(0,12)+".");
+  return p;
+}
+async function vtask(fn){
+  if(vbusy)return;vbusy=true;const my=sess;
+  try{await fn(my)}catch(err){if(my===sess){vstat(err.message,"err");log("Vault error: "+err.message,"err")}}
+  finally{if(my===sess)vbusy=false}
+}
+function enterVault(){hideEl("vStart");show("vMain");renderVault()}
+function vrow(parent,name,meta,links){
+  const r=document.createElement("div"),n=document.createElement("div"),m=document.createElement("div");
+  r.className="r";n.className="nm";n.textContent=name;m.className="meta";m.textContent=meta;r.append(n,m);
+  links.forEach(([t,fn])=>{const b=document.createElement("button");b.className="lnk sm";b.type="button";b.textContent=t;b.onclick=fn;r.appendChild(b)});
+  parent.appendChild(r);return r;
+}
+function restore(p,v){pend.del.delete(p);pend.put.set(p,{blob:v.blob,sha:v.sha,size:v.size});log("Staged restore of "+p+" from "+v.id+".");renderVault()}
+function renderVault(){
+  const L=$("vList"),D=$("vDel"),np=pend.put.size+pend.del.size;L.innerHTML="";D.innerHTML="";$("vWarn").innerHTML="";
+  $("vInfo").textContent="Vault "+VS.vault+" · main M"+VS.main+" · "+(VS.last.n?"latest "+vkey(VS.last):"no changes yet")+" · "+VS.files.size+" file(s)";
+  VS.warnings.concat(VS.last.n>=900?["This month is at "+VS.last.n+" of 999 saves. Consider combining."]:[]).forEach(w=>{const d=document.createElement("div");d.className="warn";d.textContent=w;$("vWarn").appendChild(d)});
+  $("vPend").textContent=np?pend.put.size+" file(s) to save, "+pend.del.size+" to delete. Nothing is written until you press Save change.":"No pending changes.";
+  $("vSave").disabled=!np;$("vSnap").disabled=!!np||!VS.last.n;
+  [...new Set([...VS.files.keys(),...pend.put.keys()])].sort().forEach(p=>{
+    const del=pend.del.has(p),pp=pend.put.get(p),cur=VS.files.get(p),live=pp?pp.sha:cur&&cur.sha;
+    const vers=(VS.hist.get(p)||[]).filter(v=>v.sha!==live),links=[],vd=document.createElement("div");vd.className="vers hide";
+    links.push(del?["Undo",()=>{pend.del.delete(p);renderVault()}]:[cur?"Delete":"Remove",()=>{pend.put.delete(p);if(cur)pend.del.add(p);renderVault()}]);
+    if(vers.length)links.push(["Versions ("+vers.length+")",()=>vd.classList.toggle("hide")]);
+    vrow(L,p,fsize(pp?pp.size:cur.size)+(del?" · will delete":pp?(cur?" · edited":" · new"):""),links);L.appendChild(vd);
+    vers.slice().reverse().forEach(v=>{const d=document.createElement("div"),b=document.createElement("button");d.textContent=v.id+" · "+fsize(v.size)+" ";b.className="lnk sm";b.type="button";b.textContent="Restore";b.onclick=()=>restore(p,v);d.appendChild(b);vd.appendChild(d)});
+  });
+  const shown=new Set();
+  VS.markers.forEach(m=>{
+    if(m.restored||VS.files.has(m.path)||pend.put.has(m.path)||shown.has(m.path))return;shown.add(m.path);
+    const v=lastVer(VS,m.path);vrow(D,m.path,"deleted in "+m.by+(v?"":" · no copy kept"),v?[["Restore",()=>restore(m.path,v)]]:[]);
+  });
+  if(!D.children.length)D.textContent="None.";
+}
+async function addFiles(list){
+  const pre=($("vPre").value||"").trim().replace(/^\/+|\/+$/g,"");let n=0;
+  for(const f of list){
+    let p=(f.webkitRelativePath||f.name).replace(/\\/g,"/");if(pre)p=pre+"/"+p;
+    if(p.startsWith("_vault/")){log("Skipped reserved path "+p+".","err");continue}
+    const sh=await sha(await f.arrayBuffer()),cur=VS.files.get(p);
+    if(cur&&cur.sha===sh){pend.del.delete(p);pend.put.delete(p);log("Unchanged, skipped: "+p);continue}
+    pend.del.delete(p);pend.put.set(p,{blob:f,sha:sh,size:f.size});n++;log("Staged: "+p+" ("+fsize(f.size)+").");
+  }
+  vstat(n+" file(s) staged. Press Save change to write them.","ok");renderVault();
+}
+const pwOk=()=>{const a=$("vpw").value;if(!a){vstat("Enter the password first.","err");return false}return true};
+$("vOpenBtn").onclick=()=>{if(pwOk())$("vOpenIn").click()};
+const needNew=()=>{if(!pwOk())return false;if($("vpw").value!==$("vpw2").value){vstat("The two passwords do not match.","err");return false}return true};
+$("vNewBtn").onclick=()=>{if(needNew())$("vNewIn").click()};
+$("vNewDirBtn").onclick=()=>{if(needNew())$("vNewDir").click()};
+$("vOpenIn").onchange=e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)vtask(async my=>{
+  const pw=$("vpw").value,pieces=[],skipped=[];log("---- Open vault: "+fs.length+" file(s) ----");
+  for(let i=0;i<fs.length;i++){
+    vstat("Decrypting file "+(i+1)+" of "+fs.length+"...");
+    try{pieces.push(await readPiece(fs[i],pw))}catch(err){skipped.push(fs[i].name+": "+(/password/i.test(err.message)?"could not be opened with this password":err.message));log("Skipped "+fs[i].name+": "+err.message,"err")}
+  }
+  if(my!==sess)return;
+  if(!pieces.length)throw new Error("No vault files could be opened. Check the password.");
+  const st=await buildState(pieces);st.warnings.push(...skipped.map(x=>"Skipped "+x));
+  VS=st;vpw=pw;$("vpw").value=$("vpw2").value="";
+  log("Vault opened: "+VS.files.size+" file(s), main M"+VS.main+", "+VS.warnings.length+" warning(s).","ok");vstat("");enterVault();
+})};
+function startNew(list){
+  if(list.length)vtask(async my=>{
+    const pw=$("vpw").value,e=[];
+    for(const f of list){const p=(f.webkitRelativePath||f.name).replace(/\\/g,"/");if(!p.startsWith("_vault/"))e.push({path:p,blob:f})}
+    if(!e.length)throw new Error("No files to add.");
+    log("---- New vault: "+e.length+" file(s) ----");vstat("Creating vault...");
+    const pk=await mkNewMain(e),out=await encPiece(pk,pw);if(my!==sess)return;
+    save(out,pk.name);VS=await buildState([pk]);VS.names=[pk.name];vpw=pw;$("vpw").value=$("vpw2").value="";
+    enterVault();vstat("Created "+pk.name+". Keep it safe; every change file depends on it.","ok");
+  });
+}
+$("vNewIn").onchange=e=>{const f=[...e.target.files];e.target.value="";startNew(f)};
+$("vNewDir").onchange=e=>{const f=[...e.target.files];e.target.value="";startNew(f)};
+$("vAdd").onclick=()=>$("vAddIn").click();$("vAddDir").onclick=()=>$("vAddDirIn").click();
+$("vAddIn").onchange=e=>{const f=[...e.target.files];e.target.value="";if(f.length)vtask(()=>addFiles(f))};
+$("vAddDirIn").onchange=e=>{const f=[...e.target.files];e.target.value="";if(f.length)vtask(()=>addFiles(f))};
+$("vSave").onclick=()=>vtask(async my=>{
+  vstat("Saving...");const pk=await mkChange(VS,pend);
+  log("---- Save change "+pk.name+": "+pk.head.files.length+" file(s) written, "+pk.head.deleted.length+" deleted, previous link "+(pk.head.prev||"").slice(0,12)+" ----");
+  const out=await encPiece(pk,vpw);if(my!==sess)return;
+  save(out,pk.name);commit(VS,pk);pend={put:new Map(),del:new Set()};renderVault();
+  vstat("Saved "+pk.name+". Keep it with the rest of your vault.","ok");
+});
+$("vSnap").onclick=()=>vtask(async my=>{
+  vstat("Building snapshot...");const pk=await mkSnap(VS);
+  log("---- Snapshot "+pk.name+": "+pk.files.length+" file(s) changed since main, "+pk.head.deleted.length+" deleted ----");
+  const out=await encPiece(pk,vpw);if(my!==sess)return;
+  save(out,pk.name);VS.names.push(pk.name);vstat("Saved "+pk.name+". Main + this snapshot + later changes rebuild everything.","ok");
+});
+$("vPrev").onclick=()=>{
+  const items=[];new Set([...VS.files.keys(),...pend.put.keys()]).forEach(p=>{if(pend.del.has(p))return;const f=pend.put.get(p)||VS.files.get(p);items.push(item(f.blob,p.split("/").pop(),p))});
+  loadPreview(items,"Vault M"+VS.main).then(()=>tabTo("pv"));
+};
+$("vClose").onclick=()=>{log("Vault closed. Nothing on your device was changed.");vaultClose()};
+$("vCombine").onclick=()=>vtask(async my=>{
+  if(pend.put.size||pend.del.size)throw new Error("Save or undo your pending changes before combining.");
+  const o={del:document.querySelector("input[name=vdel]:checked").value,hist:$("vHist").checked},old=VS.names.slice();
+  vstat("Building new main...");log("---- Combine into M"+(VS.main+1)+" (deleted: "+o.del+", history: "+o.hist+") ----");
+  const pk=await mkCombine(VS,o),out=await encPiece(pk,vpw);
+  const chk=await unpackVault((await aesDec(new Uint8Array(await out.arrayBuffer()),vpw)).pt);
+  const live=chk.files.filter(f=>!f.path.startsWith("_vault/"));
+  if(live.length!==VS.files.size||live.some(f=>!VS.files.has(f.path)||VS.files.get(f.path).sha!==f.sha))throw new Error("The new main does not match the current files. Nothing was saved.");
+  log("Check passed: all "+live.length+" files in the new main match the current state.","ok");
+  if(my!==sess)return;
+  save(out,pk.name);const names=VS.names.concat([pk.name]);VS=await buildState([pk]);VS.names=[pk.name];renderVault();
+  vstat("New main created: "+pk.name+".","ok");
+  $("vNote").textContent="Open the new main once and look through it. Only then delete the old files:\n"+old.map(n=>"  "+n).join("\n")+"\nDo not delete "+pk.name+".";
+});
+setMode("enc");setFmt("aes");
+</script>
+</body>
+</html>
