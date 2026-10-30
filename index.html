@@ -148,8 +148,9 @@ body.plain #bar{display:flex}
 #lb pre{text-align:left;white-space:pre-wrap;word-break:break-word;max-height:66vh;overflow:auto;border:1px solid #333;border-radius:8px;padding:12px;margin:0}
 #lb iframe{width:100%;height:66vh;border:1px solid #333;border-radius:8px;background:#fff}
 .nav{position:fixed;top:50%;font-size:2.6rem;background:none;border:0;color:#fff;width:52px;height:80px;margin-top:-40px;cursor:pointer;z-index:3}
-#saveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:120;background:#1f1f23;color:#fff;border:1px solid #555;border-radius:10px;padding:10px 14px;font:.9rem system-ui,sans-serif;display:flex;gap:12px;align-items:center;max-width:94vw;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-#saveTxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#saveBar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:120;background:#1f1f23;color:#fff;border:1px solid #555;border-radius:10px;padding:10px 14px;font:.9rem system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;max-width:94vw;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#saveTxt{min-width:0;word-break:break-all}
+#saveBar .sb{font-size:.9rem;text-decoration:underline}
 #saveBar a{color:#4ade80;text-decoration:underline;font-weight:600;white-space:nowrap}
 #saveBar button{background:none;border:0;color:#fff;font-size:1.1rem;cursor:pointer}
 .tb.new::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:6px;vertical-align:middle}
@@ -167,6 +168,32 @@ body.plain #bar{display:flex}
 .warn{color:#facc15;font-size:.88rem;margin:4px 0}
 #bar{overflow-x:auto}
 @media(max-width:520px){.tb{padding:8px 9px;font-size:.85rem}}
+body.plain button:focus-visible,body.plain input:focus-visible,body.plain summary:focus-visible,body.plain a:focus-visible{outline:2px solid #22c55e;outline-offset:2px}
+body.plain .lnk,body.plain .tb,body.plain .seg button{transition:background .15s,border-color .15s,color .15s}
+.box,.pcard{box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.hint{line-height:1.45}
+.vcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.vcols{grid-template-columns:1fr}}
+.vcard{border:1px solid #2c2c2c;border-radius:10px;padding:14px;background:#0f0f11}
+.vcard h3{margin:0 0 10px;font-size:1rem;color:#fff}
+.help{margin:8px 0 12px;padding-left:20px;color:#bbb;font-size:.88rem;line-height:1.55}
+.chips2{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chips2 i{font-style:normal;font-size:.78rem;background:#1f1f23;border:1px solid #333;border-radius:999px;padding:3px 11px;color:#ddd}
+.pendbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid #2c2c2c;border-radius:10px;margin:12px 0;color:#aaa;font-size:.9rem}
+.pendbar.on{border-color:#22c55e;background:#0d1f14;color:#d1fae5}
+#vSave:not(:disabled){background:#22c55e;color:#000;border-color:#22c55e;text-decoration:none;font-weight:700}
+#vltp h4{margin:16px 0 4px;font-size:.9rem;color:#bbb;font-weight:600}
+.pill{font-size:.72rem;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap}
+.pill.new{background:#14532d;color:#86efac}.pill.edit{background:#713f12;color:#fde68a}.pill.del{background:#7f1d1d;color:#fca5a5}
+.dir{color:#888}
+.pieces{margin:0 0 12px}
+.pieces .pc{padding:6px 0;border-bottom:1px solid #222;font-size:.85rem;color:#ccc;word-break:break-all}
+.pieces .pc small{display:block;color:#888}
+#vltp label.opt{display:flex;gap:10px;align-items:flex-start;margin:0 0 10px;color:#ddd}
+#vltp label.opt small{display:block;color:#999;font-size:.82rem;margin-top:2px}
+#vltp label.opt input{margin-top:3px}
+.comb{border:1px solid #2c2c2c;border-radius:10px;padding:10px 14px;margin-top:14px}
+.comb p{margin:8px 0}
 </style>
 </head>
 <body>
@@ -220,29 +247,46 @@ body.plain #bar{display:flex}
 </div>
 </section>
 <section id="vltp" class="pane hide"><div class="pcard">
-<div class="phead"><h2>Vault</h2><span class="hint">One encrypted main file plus small change files, like a simple git.</span></div>
-<div id="vStart">
+<div class="phead"><h2>Vault</h2><span class="hint">Your files, kept as one main file plus small change files.</span></div>
+<details><summary class="lnk sm">How it works</summary>
+<ul class="help">
+<li><b>Main</b> holds all your files. You make it once.</li>
+<li><b>Changes</b> are small files, one per save. Each holds only what you changed.</li>
+<li><b>Snapshot</b> is an optional catch-up file. Main + the latest snapshot + later changes rebuild everything.</li>
+<li><b>Combine</b> rolls everything into a fresh main when you have too many pieces.</li>
+<li>Keep every piece together. The tool reads the inside of each file, so a renamed file still works. "Vault files" below shows what each piece should be called.</li>
+</ul></details>
+<div id="vStart" class="vcols">
+<div class="vcard"><h3>Open a vault</h3>
+<label>Password<input type="password" id="vpwo" autocomplete="off"></label>
+<button class="lnk b" id="vOpenBtn" type="button">Choose vault files...</button>
+<p class="hint" style="margin-top:10px">Select the main file and every change and snapshot file you have, all at once.</p></div>
+<div class="vcard"><h3>Create a new vault</h3>
 <label>Password<input type="password" id="vpw" autocomplete="off"></label>
-<label>Confirm password (new vault only)<input type="password" id="vpw2" autocomplete="off"></label>
-<div class="acts"><button class="lnk b" id="vOpenBtn" type="button">Open vault files</button><button class="lnk b" id="vNewBtn" type="button">New vault from files</button><button class="lnk b" id="vNewDirBtn" type="button">New vault from folder</button></div>
+<label>Confirm password<input type="password" id="vpw2" autocomplete="off"></label>
+<div class="acts"><button class="lnk b" id="vNewBtn" type="button">Choose files...</button><button class="lnk b" id="vNewDirBtn" type="button">Choose a folder...</button></div>
+<p class="hint">A .zip is stored as one file. Pick a folder to keep its folder structure.</p></div>
 <input id="vOpenIn" type="file" accept=".aes" multiple class="hide"><input id="vNewIn" type="file" multiple class="hide"><input id="vNewDir" type="file" webkitdirectory class="hide">
-<p class="hint">To open: type the password, press Open vault files, and select the main file plus every change and snapshot file you have.</p>
 </div>
 <div id="vMain" class="hide">
-<p class="hint" id="vInfo"></p><div id="vWarn"></div>
-<div class="acts"><button class="lnk sm" id="vAdd" type="button">Add or replace files</button><button class="lnk sm" id="vAddDir" type="button">Add folder</button></div>
-<label>Put new files in folder (optional)<input type="text" id="vPre" placeholder="top level"></label>
+<div class="chips2" id="vInfo"></div><div id="vWarn"></div>
+<details class="pieces"><summary class="lnk sm" id="vPiecesT">Vault files</summary><div id="vPiecesL"></div></details>
+<div class="acts"><button class="lnk b" id="vAdd" type="button">Add or replace files</button><button class="lnk b" id="vAddDir" type="button">Add a folder</button></div>
+<label>Put new files in this folder (optional)<input type="text" id="vPre" placeholder="top level"></label>
 <input id="vAddIn" type="file" multiple class="hide"><input id="vAddDirIn" type="file" webkitdirectory class="hide">
-<p class="hint" id="vPend"></p>
+<div class="pendbar" id="vPendBar"><span id="vPend"></span><button class="lnk b" id="vSave" type="button">Save change</button></div>
 <div class="plist" id="vList"></div>
-<p class="hint" style="margin-top:12px">Deleted files</p><div class="plist" id="vDel"></div>
-<div class="acts" style="margin-top:12px"><button class="lnk b" id="vSave" type="button">Save change</button><button class="lnk b" id="vSnap" type="button">Snapshot</button><button class="lnk b" id="vPrev" type="button">Preview</button><button class="lnk b" id="vClose" type="button">Close vault</button></div>
-<details><summary class="lnk sm">Combine into a new main...</summary>
-<p class="hint">Deleted files:</p>
-<label class="chk"><input type="radio" name="vdel" value="remove">Remove completely (no trace)</label>
-<label class="chk"><input type="radio" name="vdel" value="marker" checked>Keep a small marker only (cannot restore)</label>
-<label class="chk"><input type="radio" name="vdel" value="keep">Keep a restorable copy (bigger)</label>
-<label class="chk"><input type="checkbox" id="vHist">Keep old versions of edited files (bigger)</label>
+<h4 id="vDelH" class="hide">Deleted files</h4><div class="plist" id="vDel"></div>
+<div class="acts" style="margin-top:14px"><button class="lnk b" id="vSnap" type="button">Snapshot</button><button class="lnk b" id="vPrev" type="button">Preview</button><button class="lnk b" id="vClose" type="button">Close vault</button></div>
+<details class="comb"><summary class="lnk">Combine into a new main...</summary>
+<p class="hint">Rolls the main file and every change into one fresh main file. Do this when you have lots of pieces. Your old files stay on your device until you delete them yourself.</p>
+<p><b>1. What should happen to files you deleted?</b></p>
+<label class="opt"><input type="radio" name="vdel" value="remove"><span><b>Forget them</b><small>Gone for good. No trace that they ever existed.</small></span></label>
+<label class="opt"><input type="radio" name="vdel" value="marker" checked><span><b>Remember only the name (recommended)</b><small>Keeps a tiny note with the name and date. The contents cannot be brought back.</small></span></label>
+<label class="opt"><input type="radio" name="vdel" value="keep"><span><b>Keep a copy so I can restore them</b><small id="vSzKeep"></small></span></label>
+<p><b>2. Keep older versions of files you edited?</b></p>
+<label class="opt"><input type="checkbox" id="vHist"><span><b>Yes, keep older versions</b><small id="vSzHist"></small></span></label>
+<p class="hint" id="vCombInfo"></p>
 <button class="lnk b" id="vCombine" type="button">Build new main</button>
 </details>
 </div>
@@ -265,7 +309,7 @@ body.plain #bar{display:flex}
 <footer><span></span><span></span><span></span><br>made with honey</footer>
 </div>
 
-<div id="saveBar" class="hide" role="status"><span id="saveTxt"></span><a id="saveLink" href="#">Tap here to save</a><button id="saveX" type="button" aria-label="Dismiss">✕</button></div>
+<div id="saveBar" class="hide" role="status"><span id="saveTxt"></span><a id="saveLink" class="sb" href="#">Tap here to save</a><button id="saveAs" class="sb hide" type="button">Save as...</button><button id="saveShare" class="sb hide" type="button">Share</button><button id="saveCopy" class="sb" type="button">Copy name</button><button id="saveX" type="button" aria-label="Dismiss">✕</button></div>
 <button id="snd" type="button">♪ music: on</button>
 <div id="lb" class="ov hide" role="dialog" aria-modal="true"><button class="x" id="lbX" type="button" aria-label="Close">✕</button><button class="nav" id="lbP" type="button" style="left:2px" aria-label="Previous">‹</button><button class="nav" id="lbN" type="button" style="right:2px" aria-label="Next">›</button><div class="stage"><p id="lbName"></p><div id="lbBody"></div><p style="margin-top:14px"><button class="lnk b" id="lbDl" type="button">Download</button></p></div></div>
 <script>
@@ -381,18 +425,20 @@ async function loadMp3(f){
   const chips=[(f.size/1048576).toFixed(1)+" MB",t.ver?"ID3v2."+t.ver:(t.v1?"ID3v1":"no tags yet"),n+(n===1?" tag":" tags")+" found"];
   $("chips").innerHTML="";chips.forEach(c=>{const i=document.createElement("i");i.textContent=c;$("chips").appendChild(i)});
 }
-let lastUrl=null,saveTm=null;
+let lastUrl=null,saveTm=null,lastBlob=null,lastName="";
 function save(blob,name){
   try{
     if(lastUrl)URL.revokeObjectURL(lastUrl);
     const b=blob.type?blob:new Blob([blob],{type:"application/octet-stream"});
-    lastUrl=URL.createObjectURL(b);
+    lastBlob=b;lastName=name;lastUrl=URL.createObjectURL(b);
     const a=document.createElement("a");a.href=lastUrl;a.download=name;a.rel="noopener";a.style.display="none";
     document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1000);
-    $("saveTxt").textContent="Saving "+name+". Nothing happened?";
-    const l=$("saveLink");l.href=lastUrl;l.download=name;show("saveBar");
-    clearTimeout(saveTm);saveTm=setTimeout(()=>hideEl("saveBar"),30000);
-    log("Download triggered: "+name+" ("+blob.size+" bytes). If the browser blocked it, use the save link.");
+    $("saveTxt").textContent="Saving "+name;
+    const l=$("saveLink");l.href=lastUrl;l.download=name;
+    let canShare=false;try{canShare=!!(navigator.canShare&&navigator.canShare({files:[new File([b],name,{type:b.type})]}))}catch(e){}
+    $("saveAs").classList.toggle("hide",!window.showSaveFilePicker);$("saveShare").classList.toggle("hide",!canShare);
+    show("saveBar");clearTimeout(saveTm);saveTm=setTimeout(()=>hideEl("saveBar"),60000);
+    log("Download triggered: "+name+" ("+blob.size+" bytes). If the browser used a different name or blocked it, use Save as, Share or the save link.");
   }catch(err){log("Download error: "+err.message,"err");alert("Download failed: "+err.message)}
 }
 $("dl").onclick=async()=>{
@@ -446,10 +492,13 @@ function log(m,lv){
   L.appendChild(d);while(L.children.length>500)L.firstChild.remove();L.scrollTop=1e9;
   $("conN").textContent=" ("+LOGS.length+")";
 }
-addEventListener("error",e=>log("Script error: "+e.message,"err"));
+addEventListener("error",e=>log("Script error: "+(e.message||"unknown")+(e.filename?" ("+e.filename.split("/").pop()+":"+e.lineno+":"+e.colno+")":" (no details given; usually a browser or host script, not this page)"),"err"));
 addEventListener("unhandledrejection",e=>log("Unhandled error: "+((e.reason&&e.reason.message)||e.reason),"err"));
 $("copyLog").onclick=async()=>{try{await navigator.clipboard.writeText(LOGS.join("\n"));log("Log copied to clipboard.","ok")}catch(x){log("Could not copy: "+x.message,"err")}};
 $("saveX").onclick=()=>hideEl("saveBar");
+$("saveAs").onclick=async()=>{try{const h=await showSaveFilePicker({suggestedName:lastName}),w=await h.createWritable();await w.write(lastBlob);await w.close();log("Saved with Save as: "+lastName+".","ok")}catch(e){if(e.name!=="AbortError")log("Save as failed: "+e.message,"err")}};
+$("saveShare").onclick=async()=>{try{await navigator.share({files:[new File([lastBlob],lastName,{type:"application/octet-stream"})]});log("Shared "+lastName+".","ok")}catch(e){if(e.name!=="AbortError")log("Share failed: "+e.message,"err")}};
+$("saveCopy").onclick=async()=>{try{await navigator.clipboard.writeText(lastName);log("Copied the file name: "+lastName+".","ok")}catch(e){log("Could not copy. The name is: "+lastName,"err")}};
 $("clrLog").onclick=()=>{LOGS=[];$("logv").innerHTML="";$("conN").textContent=""};
 
 /* ---------- tabs ---------- */
@@ -808,6 +857,18 @@ $("lb").onclick=e=>{if(e.target.id==="lb"||e.target.classList.contains("stage"))
 const pad3=n=>String(n).padStart(3,"0");
 const ymNow=()=>{const d=new Date();return d.getFullYear()+"_"+String(d.getMonth()+1).padStart(2,"0")};
 const vkey=h=>h.ym+"_"+pad3(h.n);
+const roleOf=h=>h.type==="main"?"Main M"+h.main:h.type==="change"?"Change "+pad3(h.n):"Snapshot up to "+pad3(h.upTo.n);
+function intendedName(h){
+  const ym=h.type==="main"?(h.ym||String(h.created).slice(0,7).replace("-","_")):h.type==="change"?h.ym:h.upTo.ym,b=ym+"_MP3manager_M"+h.main;
+  return h.type==="main"?b+".aes":h.type==="change"?b+"_"+pad3(h.n)+".aes":b+"_S"+pad3(h.upTo.n)+".aes";
+}
+function combineSizes(st){
+  let liveBytes=0,histBytes=0,histCount=0,deadBytes=0,deadCount=0;
+  st.files.forEach((f,p)=>{liveBytes+=f.size;(st.hist.get(p)||[]).forEach(v=>{if(v.sha!==f.sha){histBytes+=v.size;histCount++}})});
+  const seen=new Set();
+  st.markers.forEach(m=>{if(!m.restored&&!st.files.has(m.path)&&!seen.has(m.path)){seen.add(m.path);const v=lastVer(st,m.path);if(v){deadBytes+=v.size;deadCount++}}});
+  return{liveCount:st.files.size,liveBytes,histBytes,histCount,deadBytes,deadCount};
+}
 async function sha(buf){return hex(new Uint8Array(await crypto.subtle.digest("SHA-256",buf)))}
 async function deflate(blob){
   if(typeof CompressionStream!=="undefined"){try{return new Blob([new Uint8Array([1]),await new Response(blob.stream().pipeThrough(new CompressionStream("deflate-raw"))).blob()])}catch(e){}}
@@ -859,7 +920,7 @@ async function loadMain(st,M){
 }
 async function buildState(pieces){
   const warn=[],mains=pieces.filter(p=>p.head.type==="main");
-  if(mains.length!==1)throw new Error(mains.length?"More than one main file was given. Open one vault at a time.":"No main file found. Add the main file too (for example ..._M1.aes).");
+  if(mains.length!==1)throw new Error(mains.length?"More than one main file was given. Open one vault at a time.":"The main file is missing. "+(pieces[0]?"These files need main M"+pieces[0].head.main+" (the file whose name ends in _M"+pieces[0].head.main+".aes). Choose it together with the change files.":"Choose the main file too."));
   const M=mains[0],vid=M.head.vault,mn=M.head.main,good=[];
   pieces.filter(p=>p!==M).forEach(p=>{
     if(p.head.vault!==vid)warn.push(p.name+" belongs to a different vault. Ignored.");
@@ -871,7 +932,7 @@ async function buildState(pieces){
     const k=vkey(c.head);if(seen.has(k))warn.push("Two files claim number "+k+". Using the first, ignoring "+c.name+".");else{seen.add(k);changes.push(c)}
   });
   const snaps=good.filter(p=>p.head.type==="snap").sort((a,b)=>vkey(a.head.upTo)<vkey(b.head.upTo)?-1:1),S=snaps[snaps.length-1]||null;
-  const st={vault:vid,main:mn,files:new Map(),hist:new Map(),markers:[],base:new Map(),names:pieces.map(p=>p.name),warnings:warn,last:{ym:"",n:0,fp:M.fp}};
+  const st={vault:vid,main:mn,files:new Map(),hist:new Map(),markers:[],base:new Map(),names:pieces.map(p=>p.name),pieceInfo:[M].concat(good).map(p=>({loaded:p.name,intended:intendedName(p.head),role:roleOf(p.head)})),warnings:warn,last:{ym:"",n:0,fp:M.fp}};
   await loadMain(st,M);
   let prev=M.fp,seq=changes;
   if(S){
@@ -899,7 +960,7 @@ async function mkChange(st,pend){
   const pk=await packVault(newHead(st,"change",{ym:id.ym,n:id.n,prev:st.last.fp,deleted:del}),entries);
   pk.name=id.ym+"_MP3manager_M"+st.main+"_"+pad3(id.n)+".aes";return pk;
 }
-function commit(st,pk){applyPiece(st,pk,vkey(pk.head));st.last={ym:pk.head.ym,n:pk.head.n,fp:pk.fp};st.names.push(pk.name)}
+function commit(st,pk){applyPiece(st,pk,vkey(pk.head));st.last={ym:pk.head.ym,n:pk.head.n,fp:pk.fp};st.names.push(pk.name);st.pieceInfo.push({loaded:pk.name,intended:pk.name,role:roleOf(pk.head)})}
 async function mkSnap(st){
   if(!st.last.n)throw new Error("Save at least one change first.");
   const put=[],del=[];
@@ -911,7 +972,7 @@ async function mkSnap(st){
 async function mkMainPack(entries,vault,main,note){
   const created=new Date().toISOString();
   const all=entries.concat([{path:"_vault/manifest.json",blob:new Blob([JSON.stringify({vault,main,created,note},null,1)])}]);
-  const pk=await packVault({type:"main",vault,main,prev:"",created},all);
+  const pk=await packVault({type:"main",vault,main,prev:"",created,ym:ymNow()},all);
   pk.name=ymNow()+"_MP3manager_M"+main+".aes";return pk;
 }
 const mkNewMain=entries=>mkMainPack(entries,hex(crypto.getRandomValues(new Uint8Array(6))),1,"new vault");
@@ -924,11 +985,12 @@ async function mkCombine(st,o){
   return mkMainPack(e,st.vault,st.main+1,"combined from M"+st.main+(st.last.n?" up to "+vkey(st.last):""));
 }
 /* ---------- vault ui ---------- */
-let VS=null,vpw="",pend={put:new Map(),del:new Set()},vbusy=false;
+let VS=null,vpw="",pend={put:new Map(),del:new Set()},vbusy=false,armClose=false,armTm2=null;
 const vstat=(m,k)=>{const e=$("vStat");e.textContent=m;e.className="stat"+(k?" "+k:"")};
 function vaultClose(){
-  VS=null;vpw="";pend={put:new Map(),del:new Set()};vbusy=false;hideEl("vMain");show("vStart");vstat("");
-  $("vNote").textContent="";$("vpw").value=$("vpw2").value="";$("vList").innerHTML="";$("vDel").innerHTML="";
+  VS=null;vpw="";pend={put:new Map(),del:new Set()};vbusy=false;armClose=false;clearTimeout(armTm2);
+  hideEl("vMain");show("vStart");vstat("");$("vNote").textContent="";$("vClose").textContent="Close vault";
+  $("vpw").value=$("vpw2").value=$("vpwo").value="";$("vList").innerHTML="";$("vDel").innerHTML="";$("vPiecesL").innerHTML="";$("vInfo").innerHTML="";
 }
 async function aesEncBlob(data,nameStr,pw){
   const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(16)),nm=enc.encode(nameStr);
@@ -945,7 +1007,8 @@ async function encPiece(pk,pw){
 }
 async function readPiece(file,pw){
   const d=await aesDec(new Uint8Array(await file.arrayBuffer()),pw),p=await unpackVault(d.pt);
-  p.name=file.name;log("Vault file "+file.name+": "+p.head.type+(p.head.type==="main"?" M"+p.head.main:p.head.type==="change"?" "+vkey(p.head):" up to "+vkey(p.head.upTo))+", "+p.files.length+" file(s), fingerprint "+p.fp.slice(0,12)+".");
+  p.name=file.name;
+  log("Opened "+file.name+": "+roleOf(p.head)+", "+p.files.filter(f=>!f.path.startsWith("_vault/")).length+" file(s), fingerprint "+p.fp.slice(0,12)+".");
   return p;
 }
 async function vtask(fn){
@@ -954,33 +1017,51 @@ async function vtask(fn){
   finally{if(my===sess)vbusy=false}
 }
 function enterVault(){hideEl("vStart");show("vMain");renderVault()}
-function vrow(parent,name,meta,links){
-  const r=document.createElement("div"),n=document.createElement("div"),m=document.createElement("div");
-  r.className="r";n.className="nm";n.textContent=name;m.className="meta";m.textContent=meta;r.append(n,m);
-  links.forEach(([t,fn])=>{const b=document.createElement("button");b.className="lnk sm";b.type="button";b.textContent=t;b.onclick=fn;r.appendChild(b)});
+function mkEl(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function vrow(parent,path,pill,meta,links){
+  const r=mkEl("div","r"),n=mkEl("div","nm"),i=path.lastIndexOf("/");
+  if(i>=0)n.appendChild(mkEl("span","dir",path.slice(0,i+1)));
+  n.appendChild(document.createTextNode(path.slice(i+1)));
+  if(pill)n.appendChild(mkEl("span","pill "+pill[0],pill[1]));
+  r.append(n,mkEl("div","meta",meta));
+  links.forEach(([t,fn])=>{const b=mkEl("button","lnk sm",t);b.type="button";b.onclick=fn;r.appendChild(b)});
   parent.appendChild(r);return r;
 }
 function restore(p,v){pend.del.delete(p);pend.put.set(p,{blob:v.blob,sha:v.sha,size:v.size});log("Staged restore of "+p+" from "+v.id+".");renderVault()}
+function copyName(n){navigator.clipboard.writeText(n).then(()=>log("Copied the file name: "+n+".","ok")).catch(()=>log("Could not copy. The name is: "+n,"err"))}
 function renderVault(){
-  const L=$("vList"),D=$("vDel"),np=pend.put.size+pend.del.size;L.innerHTML="";D.innerHTML="";$("vWarn").innerHTML="";
-  $("vInfo").textContent="Vault "+VS.vault+" · main M"+VS.main+" · "+(VS.last.n?"latest "+vkey(VS.last):"no changes yet")+" · "+VS.files.size+" file(s)";
-  VS.warnings.concat(VS.last.n>=900?["This month is at "+VS.last.n+" of 999 saves. Consider combining."]:[]).forEach(w=>{const d=document.createElement("div");d.className="warn";d.textContent=w;$("vWarn").appendChild(d)});
-  $("vPend").textContent=np?pend.put.size+" file(s) to save, "+pend.del.size+" to delete. Nothing is written until you press Save change.":"No pending changes.";
-  $("vSave").disabled=!np;$("vSnap").disabled=!!np||!VS.last.n;
+  const L=$("vList"),D=$("vDel"),np=pend.put.size+pend.del.size,I=$("vInfo");
+  L.innerHTML="";D.innerHTML="";$("vWarn").innerHTML="";I.innerHTML="";$("vPiecesL").innerHTML="";
+  ["Main M"+VS.main,VS.last.n?"Latest "+vkey(VS.last):"No changes yet",VS.files.size+" file"+(VS.files.size===1?"":"s"),"ID "+VS.vault].forEach(t=>I.appendChild(mkEl("i","",t)));
+  VS.warnings.concat(VS.last.n>=900?["This month is at "+VS.last.n+" of 999 saves. Consider combining."]:[]).forEach(w=>$("vWarn").appendChild(mkEl("div","warn",w)));
+  $("vPiecesT").textContent="Vault files ("+VS.pieceInfo.length+")";
+  VS.pieceInfo.forEach(x=>{
+    const d=mkEl("div","pc",x.role+" · "+x.intended+" "),b=mkEl("button","lnk sm","Copy name");b.type="button";b.onclick=()=>copyName(x.intended);d.appendChild(b);
+    if(x.loaded!==x.intended)d.appendChild(mkEl("small","","Opened as "+x.loaded+". Rename it to the name above to keep your folder tidy."));
+    $("vPiecesL").appendChild(d);
+  });
+  $("vPend").textContent=np?pend.put.size+" to save, "+pend.del.size+" to delete. Nothing is written until you press Save change.":"No pending changes.";
+  $("vPendBar").classList.toggle("on",!!np);$("vSave").disabled=!np;$("vSnap").disabled=!!np||!VS.last.n;
   [...new Set([...VS.files.keys(),...pend.put.keys()])].sort().forEach(p=>{
     const del=pend.del.has(p),pp=pend.put.get(p),cur=VS.files.get(p),live=pp?pp.sha:cur&&cur.sha;
-    const vers=(VS.hist.get(p)||[]).filter(v=>v.sha!==live),links=[],vd=document.createElement("div");vd.className="vers hide";
+    const vers=(VS.hist.get(p)||[]).filter(v=>v.sha!==live),links=[],vd=mkEl("div","vers hide");
     links.push(del?["Undo",()=>{pend.del.delete(p);renderVault()}]:[cur?"Delete":"Remove",()=>{pend.put.delete(p);if(cur)pend.del.add(p);renderVault()}]);
     if(vers.length)links.push(["Versions ("+vers.length+")",()=>vd.classList.toggle("hide")]);
-    vrow(L,p,fsize(pp?pp.size:cur.size)+(del?" · will delete":pp?(cur?" · edited":" · new"):""),links);L.appendChild(vd);
-    vers.slice().reverse().forEach(v=>{const d=document.createElement("div"),b=document.createElement("button");d.textContent=v.id+" · "+fsize(v.size)+" ";b.className="lnk sm";b.type="button";b.textContent="Restore";b.onclick=()=>restore(p,v);d.appendChild(b);vd.appendChild(d)});
+    vrow(L,p,del?["del","will delete"]:pp?(cur?["edit","edited"]:["new","new"]):null,fsize(pp?pp.size:cur.size),links);L.appendChild(vd);
+    vers.slice().reverse().forEach(v=>{const d=mkEl("div","",v.id+" · "+fsize(v.size)+" "),b=mkEl("button","lnk sm","Restore");b.type="button";b.onclick=()=>restore(p,v);d.appendChild(b);vd.appendChild(d)});
   });
+  if(!L.children.length)L.appendChild(mkEl("p","hint","This vault has no files. Add some above."));
   const shown=new Set();
   VS.markers.forEach(m=>{
     if(m.restored||VS.files.has(m.path)||pend.put.has(m.path)||shown.has(m.path))return;shown.add(m.path);
-    const v=lastVer(VS,m.path);vrow(D,m.path,"deleted in "+m.by+(v?"":" · no copy kept"),v?[["Restore",()=>restore(m.path,v)]]:[]);
+    const v=lastVer(VS,m.path);vrow(D,m.path,null,"deleted in "+m.by+(v?"":" · no copy kept"),v?[["Restore",()=>restore(m.path,v)]]:[]);
   });
-  if(!D.children.length)D.textContent="None.";
+  $("vDelH").classList.toggle("hide",!D.children.length);
+  const z=combineSizes(VS);
+  $("vSzKeep").textContent=z.deadCount?"Stays hidden but can be restored. Adds about "+fsize(z.deadBytes)+" ("+z.deadCount+" file"+(z.deadCount===1?"":"s")+").":"You have no deleted files with a stored copy, so this adds nothing right now.";
+  $("vSzHist").textContent=z.histCount?"Adds about "+fsize(z.histBytes)+" ("+z.histCount+" older version"+(z.histCount===1?"":"s")+"). Without this, only the newest version of each file is kept.":"No older versions exist yet, so this adds nothing right now.";
+  $("vCombInfo").textContent="The new main will hold "+z.liveCount+" file"+(z.liveCount===1?"":"s")+", about "+fsize(z.liveBytes)+" before compression.";
+  $("vCombine").textContent="Build new main (M"+(VS.main+1)+")";
 }
 async function addFiles(list){
   const pre=($("vPre").value||"").trim().replace(/^\/+|\/+$/g,"");let n=0;
@@ -991,15 +1072,14 @@ async function addFiles(list){
     if(cur&&cur.sha===sh){pend.del.delete(p);pend.put.delete(p);log("Unchanged, skipped: "+p);continue}
     pend.del.delete(p);pend.put.set(p,{blob:f,sha:sh,size:f.size});n++;log("Staged: "+p+" ("+fsize(f.size)+").");
   }
-  vstat(n+" file(s) staged. Press Save change to write them.","ok");renderVault();
+  vstat(n?n+" file"+(n===1?"":"s")+" staged. Press Save change to write them.":"Nothing new: those files are already in the vault unchanged.",n?"ok":"");renderVault();
 }
-const pwOk=()=>{const a=$("vpw").value;if(!a){vstat("Enter the password first.","err");return false}return true};
-$("vOpenBtn").onclick=()=>{if(pwOk())$("vOpenIn").click()};
-const needNew=()=>{if(!pwOk())return false;if($("vpw").value!==$("vpw2").value){vstat("The two passwords do not match.","err");return false}return true};
+$("vOpenBtn").onclick=()=>{if(!$("vpwo").value)return vstat("Enter the vault password first.","err");vstat("");$("vOpenIn").click()};
+const needNew=()=>{const a=$("vpw").value;if(!a){vstat("Enter a password for the new vault.","err");return false}if(a!==$("vpw2").value){vstat("The two passwords do not match.","err");return false}vstat("");return true};
 $("vNewBtn").onclick=()=>{if(needNew())$("vNewIn").click()};
 $("vNewDirBtn").onclick=()=>{if(needNew())$("vNewDir").click()};
 $("vOpenIn").onchange=e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)vtask(async my=>{
-  const pw=$("vpw").value,pieces=[],skipped=[];log("---- Open vault: "+fs.length+" file(s) ----");
+  const pw=$("vpwo").value,pieces=[],skipped=[];log("---- Open vault: "+fs.length+" file(s) ----");
   for(let i=0;i<fs.length;i++){
     vstat("Decrypting file "+(i+1)+" of "+fs.length+"...");
     try{pieces.push(await readPiece(fs[i],pw))}catch(err){skipped.push(fs[i].name+": "+(/password/i.test(err.message)?"could not be opened with this password":err.message));log("Skipped "+fs[i].name+": "+err.message,"err")}
@@ -1007,7 +1087,7 @@ $("vOpenIn").onchange=e=>{const fs=[...e.target.files];e.target.value="";if(fs.l
   if(my!==sess)return;
   if(!pieces.length)throw new Error("No vault files could be opened. Check the password.");
   const st=await buildState(pieces);st.warnings.push(...skipped.map(x=>"Skipped "+x));
-  VS=st;vpw=pw;$("vpw").value=$("vpw2").value="";
+  VS=st;vpw=pw;$("vpwo").value="";
   log("Vault opened: "+VS.files.size+" file(s), main M"+VS.main+", "+VS.warnings.length+" warning(s).","ok");vstat("");enterVault();
 })};
 function startNew(list){
@@ -1017,7 +1097,7 @@ function startNew(list){
     if(!e.length)throw new Error("No files to add.");
     log("---- New vault: "+e.length+" file(s) ----");vstat("Creating vault...");
     const pk=await mkNewMain(e),out=await encPiece(pk,pw);if(my!==sess)return;
-    save(out,pk.name);VS=await buildState([pk]);VS.names=[pk.name];vpw=pw;$("vpw").value=$("vpw2").value="";
+    save(out,pk.name);VS=await buildState([pk]);vpw=pw;$("vpw").value=$("vpw2").value="";
     enterVault();vstat("Created "+pk.name+". Keep it safe; every change file depends on it.","ok");
   });
 }
@@ -1037,26 +1117,30 @@ $("vSnap").onclick=()=>vtask(async my=>{
   vstat("Building snapshot...");const pk=await mkSnap(VS);
   log("---- Snapshot "+pk.name+": "+pk.files.length+" file(s) changed since main, "+pk.head.deleted.length+" deleted ----");
   const out=await encPiece(pk,vpw);if(my!==sess)return;
-  save(out,pk.name);VS.names.push(pk.name);vstat("Saved "+pk.name+". Main + this snapshot + later changes rebuild everything.","ok");
+  save(out,pk.name);VS.names.push(pk.name);VS.pieceInfo.push({loaded:pk.name,intended:pk.name,role:roleOf(pk.head)});renderVault();
+  vstat("Saved "+pk.name+". Main + this snapshot + later changes rebuild everything.","ok");
 });
 $("vPrev").onclick=()=>{
   const items=[];new Set([...VS.files.keys(),...pend.put.keys()]).forEach(p=>{if(pend.del.has(p))return;const f=pend.put.get(p)||VS.files.get(p);items.push(item(f.blob,p.split("/").pop(),p))});
   loadPreview(items,"Vault M"+VS.main).then(()=>tabTo("pv"));
 };
-$("vClose").onclick=()=>{log("Vault closed. Nothing on your device was changed.");vaultClose()};
+$("vClose").onclick=()=>{
+  const b=$("vClose");
+  if((pend.put.size||pend.del.size)&&!armClose){armClose=true;b.textContent="Discard pending changes? Click again";clearTimeout(armTm2);armTm2=setTimeout(()=>{armClose=false;b.textContent="Close vault"},5000);return}
+  log("Vault closed. Nothing on your device was changed.");vaultClose();
+};
 $("vCombine").onclick=()=>vtask(async my=>{
   if(pend.put.size||pend.del.size)throw new Error("Save or undo your pending changes before combining.");
-  const o={del:document.querySelector("input[name=vdel]:checked").value,hist:$("vHist").checked},old=VS.names.slice();
-  vstat("Building new main...");log("---- Combine into M"+(VS.main+1)+" (deleted: "+o.del+", history: "+o.hist+") ----");
+  const o={del:document.querySelector("input[name=vdel]:checked").value,hist:$("vHist").checked},old=VS.pieceInfo.map(x=>x.role+": "+x.loaded);
+  vstat("Building new main...");log("---- Combine into M"+(VS.main+1)+" (deleted files: "+o.del+", older versions: "+o.hist+") ----");
   const pk=await mkCombine(VS,o),out=await encPiece(pk,vpw);
-  const chk=await unpackVault((await aesDec(new Uint8Array(await out.arrayBuffer()),vpw)).pt);
-  const live=chk.files.filter(f=>!f.path.startsWith("_vault/"));
+  const chk=await unpackVault((await aesDec(new Uint8Array(await out.arrayBuffer()),vpw)).pt),live=chk.files.filter(f=>!f.path.startsWith("_vault/"));
   if(live.length!==VS.files.size||live.some(f=>!VS.files.has(f.path)||VS.files.get(f.path).sha!==f.sha))throw new Error("The new main does not match the current files. Nothing was saved.");
   log("Check passed: all "+live.length+" files in the new main match the current state.","ok");
   if(my!==sess)return;
-  save(out,pk.name);const names=VS.names.concat([pk.name]);VS=await buildState([pk]);VS.names=[pk.name];renderVault();
+  save(out,pk.name);VS=await buildState([pk]);renderVault();
   vstat("New main created: "+pk.name+".","ok");
-  $("vNote").textContent="Open the new main once and look through it. Only then delete the old files:\n"+old.map(n=>"  "+n).join("\n")+"\nDo not delete "+pk.name+".";
+  $("vNote").textContent="Next steps:\n1. Open the new main once and look through your files.\n2. Only then delete the old pieces:\n"+old.map(n=>"   - "+n).join("\n")+"\n3. Keep "+pk.name+". It is now your only copy of everything.";
 });
 setMode("enc");setFmt("aes");
 </script>
